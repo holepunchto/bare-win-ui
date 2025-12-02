@@ -109,34 +109,17 @@ static void
 bare__terminate(void) {
   int err;
 
-  bare__running = false;
-
-  PostQueuedCompletionStatus(bare__loop->iocp, 0, 0, nullptr);
-
-  bare__poller.join();
-
   err = uv_async_send(&bare__shutdown);
   assert(err == 0);
 
   err = bare_terminate(bare);
   assert(err == 0);
 
-  err = bare_run(bare, UV_RUN_DEFAULT);
-  assert(err == 0);
+  bare__running = false;
 
-  err = bare_teardown(bare, UV_RUN_DEFAULT, nullptr);
-  assert(err == 0);
+  PostQueuedCompletionStatus(bare__loop->iocp, 0, 0, nullptr);
 
-  err = uv_loop_close(bare__loop);
-  assert(err == 0);
-
-  err = uv_async_send(&bare__platform_shutdown);
-  assert(err == 0);
-
-  uv_thread_join(&bare__platform_thread);
-
-  err = log_close();
-  assert(err == 0);
+  bare__poller.join();
 }
 
 static void
@@ -230,5 +213,23 @@ main(int argc, char *argv[]) {
 
   Application::Start([=](auto &&) { make<BareApp>(); });
 
-  return 0;
+  err = bare_run(bare, UV_RUN_DEFAULT);
+  assert(err == 0);
+
+  int exit_code;
+  err = bare_teardown(bare, UV_RUN_DEFAULT, &exit_code);
+  assert(err == 0);
+
+  err = uv_loop_close(bare__loop);
+  assert(err == 0);
+
+  err = uv_async_send(&bare__platform_shutdown);
+  assert(err == 0);
+
+  uv_thread_join(&bare__platform_thread);
+
+  err = log_close();
+  assert(err == 0);
+
+  return exit_code;
 }
