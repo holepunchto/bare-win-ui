@@ -10,6 +10,32 @@ fetch_package("github:holepunchto/libpath")
 
 include(cmake/windows-app-sdk.cmake)
 
+add_bare_module(bare_win_ui)
+
+target_sources(
+  ${bare_win_ui}
+  PRIVATE
+    binding.cc
+)
+
+target_compile_options(
+  ${bare_win_ui}
+  PRIVATE
+    /GR-
+)
+
+target_precompile_headers(
+  ${bare_win_ui}
+  PRIVATE
+    lib/windows-app-sdk.h
+)
+
+target_link_libraries(
+  ${bare_win_ui}
+  PUBLIC
+    WindowsAppSDK
+)
+
 add_executable(bare_runtime)
 
 target_sources(
@@ -18,11 +44,7 @@ target_sources(
     lib/runtime.cc
 )
 
-target_precompile_headers(
-  bare_runtime
-  PRIVATE
-    lib/windows-app-sdk.h
-)
+target_precompile_headers(bare_runtime REUSE_FROM ${bare_win_ui})
 
 set_target_properties(
   bare_runtime
