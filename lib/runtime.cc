@@ -33,7 +33,7 @@ static std::thread bare__poller;
 
 static void
 bare__on_shutdown(uv_async_t *handle) {
-  uv_close((uv_handle_t *) handle, nullptr);
+  uv_close(reinterpret_cast<uv_handle_t *>(handle), nullptr);
 }
 
 static void
@@ -73,7 +73,7 @@ bare__on_poller_thread(void) {
   std::unique_lock guard(lock);
 
   while (bare__running) {
-    bool pending = true;
+    auto pending = true;
     int timeout;
 
     bare__dispatcher.TryEnqueue([&]() {
@@ -91,7 +91,7 @@ bare__on_poller_thread(void) {
       condition.notify_one();
     });
 
-    condition.wait(guard, [&]{ return pending == false; });
+    condition.wait(guard, [&] { return pending == false; });
 
     DWORD bytes;
     ULONG_PTR key;
@@ -158,7 +158,7 @@ bare__launch() {
   err = uv_async_init(bare__loop, &bare__shutdown, bare__on_shutdown);
   assert(err == 0);
 
-  err = bare_setup(bare__loop, bare__platform, nullptr, bare__argc, (const char **) bare__argv, nullptr, &bare);
+  err = bare_setup(bare__loop, bare__platform, nullptr, bare__argc, const_cast<const char **>(bare__argv), nullptr, &bare);
   assert(err == 0);
 
   size_t len;
@@ -177,7 +177,7 @@ bare__launch() {
   len = 4096;
 
   err = path_join(
-    (const char *[]) {bin, "..", "..", "Resources", "app.bundle", NULL},
+    (const char *[]) {bin, "..", "..", "Resources", "app.bundle", nullptr},
     bundle,
     &len,
     path_behavior_system
