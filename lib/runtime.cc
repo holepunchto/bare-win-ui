@@ -1,4 +1,6 @@
 #include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include <thread>
 
 #include <assert.h>
@@ -26,7 +28,6 @@ static uv_async_t bare__shutdown;
 static bare_t *bare;
 
 static DispatcherQueue bare__dispatcher = nullptr;
-static std::atomic<bool> bare__dispatch_pending = false;
 static std::atomic<bool> bare__running = true;
 static std::thread bare__poller;
 
@@ -66,36 +67,40 @@ bare__on_platform_thread(void *data) {
 
 static void
 bare__on_poller_thread(void) {
+  std::mutex lock;
+  std::condition_variable condition;
+
+  std::unique_lock guard(lock);
+
   while (bare__running) {
+    bool pending = true;
+    int timeout;
+
+    bare__dispatcher.TryEnqueue([&]() {
+      int err;
+
+      std::unique_lock guard(lock);
+
+      pending = false;
+
+      err = bare_run(bare, UV_RUN_NOWAIT);
+      assert(err >= 0);
+
+      timeout = uv_backend_timeout(bare__loop);
+
+      condition.notify_one();
+    });
+
+    condition.wait(guard, [&]{ return pending == false; });
+
     DWORD bytes;
     ULONG_PTR key;
     OVERLAPPED *overlapped;
 
-    GetQueuedCompletionStatus(
-      bare__loop->iocp,
-      &bytes,
-      &key,
-      &overlapped,
-      uv_backend_timeout(bare__loop)
-    );
+    GetQueuedCompletionStatus(bare__loop->iocp, &bytes, &key, &overlapped, timeout);
 
-    if (!bare__running) break;
-
-    if (overlapped != nullptr) {
+    if (overlapped) {
       PostQueuedCompletionStatus(bare__loop->iocp, bytes, key, overlapped);
-    }
-
-    bool expected = false;
-
-    if (bare__dispatch_pending.compare_exchange_strong(expected, true)) {
-      bare__dispatcher.TryEnqueue([]() {
-        int err;
-
-        bare__dispatch_pending = false;
-
-        err = bare_run(bare, UV_RUN_NOWAIT);
-        assert(err >= 0);
-      });
     }
   }
 }
@@ -103,6 +108,8 @@ bare__on_poller_thread(void) {
 static void
 bare__terminate(void) {
   int err;
+
+  bare__running = false;
 
   PostQueuedCompletionStatus(bare__loop->iocp, 0, 0, nullptr);
 
