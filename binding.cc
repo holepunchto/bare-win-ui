@@ -20,9 +20,12 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   }
 
   V("windowInit", bare_win_ui_window_init)
+  V("windowTitle", bare_win_ui_window_title)
   V("windowContent", bare_win_ui_window_content)
   V("windowActivate", bare_win_ui_window_activate)
   V("windowClose", bare_win_ui_window_close)
+  V("windowResize", bare_win_ui_window_resize)
+  V("windowResizeClient", bare_win_ui_window_resize_client)
 
   V("webViewInit", bare_win_ui_web_view_init)
   V("webViewEnsureReady", bare_win_ui_web_view_ensure_ready)
