@@ -4,7 +4,7 @@
 #include <utf.h>
 
 #include "lib/web-view.h"
-#include "lib/window.h"
+#include "lib/window.h"
 
 static js_value_t *
 bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
