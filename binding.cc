@@ -3,7 +3,8 @@
 #include <js.h>
 #include <utf.h>
 
-#include "lib/window.h"
+#include "lib/web-view.h"
+#include "lib/window.h"
 
 static js_value_t *
 bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
@@ -19,8 +20,18 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   }
 
   V("windowInit", bare_win_ui_window_init)
+  V("windowContent", bare_win_ui_window_content)
   V("windowActivate", bare_win_ui_window_activate)
   V("windowClose", bare_win_ui_window_close)
+
+  V("webViewInit", bare_win_ui_web_view_init)
+  V("webViewEnsureReady", bare_win_ui_web_view_ensure_ready)
+  V("webViewWidth", bare_win_ui_web_view_width)
+  V("webViewHeight", bare_win_ui_web_view_height)
+  V("webViewSource", bare_win_ui_web_view_source)
+  V("webViewNavigate", bare_win_ui_web_view_navigate)
+  V("webViewNavigateToString", bare_win_ui_web_view_navigate_to_string)
+  V("webViewOpenDevToolsWindow", bare_win_ui_web_view_open_dev_tools_window)
 #undef V
 
 #define V(name, n) \

@@ -203,33 +203,15 @@ main(int argc, char *argv[]) {
   bare__argc = argc;
   bare__argv = argv;
 
+  init_apartment(apartment_type::single_threaded);
+
   bare__try_bootstrap_runtime();
 
   freopen("NUL", "r", stdin);
   freopen("NUL", "w", stdout);
   freopen("NUL", "w", stderr);
 
-  init_apartment();
-
   Application::Start([=](auto &&) { make<BareApp>(); });
 
-  err = bare_run(bare, UV_RUN_DEFAULT);
-  assert(err == 0);
-
-  int exit_code;
-  err = bare_teardown(bare, UV_RUN_DEFAULT, &exit_code);
-  assert(err == 0);
-
-  err = uv_loop_close(bare__loop);
-  assert(err == 0);
-
-  err = uv_async_send(&bare__platform_shutdown);
-  assert(err == 0);
-
-  uv_thread_join(&bare__platform_thread);
-
-  err = log_close();
-  assert(err == 0);
-
-  return exit_code;
+  return 0;
 }

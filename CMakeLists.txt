@@ -94,4 +94,9 @@ bare_target(target)
 
 install(TARGETS bare_runtime RUNTIME DESTINATION ${target})
 
-install(FILES $<TARGET_FILE:WindowsAppSDK_Bootstrap> DESTINATION ${target}/bare)
+install(
+  FILES
+    $<TARGET_FILE:WebView2_Core>
+    $<TARGET_FILE:WindowsAppSDK_Bootstrap>
+  DESTINATION ${target}/bare
+)

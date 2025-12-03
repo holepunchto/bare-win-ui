@@ -61,6 +61,8 @@ using namespace Microsoft::UI::Xaml::Media;
 using namespace Microsoft::UI::Xaml::Media::Imaging;
 using namespace Microsoft::UI::Xaml::XamlTypeInfo;
 
+using namespace Microsoft::Web::WebView2::Core;
+
 // Headers for Windows App SDK bootstrapping.
 // https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/win32/_bootstrap/
 
