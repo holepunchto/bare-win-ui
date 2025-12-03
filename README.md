@@ -1,6 +1,6 @@
 # bare-win-ui
 
-WinUI runtime for Bare.
+WinUI bindings and runtime for Bare.
 
 ```
 npm i bare-win-ui
