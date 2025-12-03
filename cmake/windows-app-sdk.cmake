@@ -44,6 +44,24 @@ function(fetch_nuget_package name version result)
   )
 endfunction()
 
+if(MSVC AND CMAKE_GENERATOR_PLATFORM)
+  set(arch ${CMAKE_GENERATOR_PLATFORM})
+elseif(CMAKE_SYSTEM_PROCESSOR)
+  set(arch ${CMAKE_SYSTEM_PROCESSOR})
+else()
+  set(arch ${CMAKE_HOST_SYSTEM_PROCESSOR})
+endif()
+
+string(TOLOWER "${arch}" arch)
+
+if(arch MATCHES "arm64|aarch64")
+  set(ARGV_ARCH "arm64")
+elseif(arch MATCHES "x64|x86_64|amd64")
+  set(ARGV_ARCH "x64")
+else()
+  message(FATAL_ERROR "Unsupported architecture '${arch}'")
+endif()
+
 fetch_nuget_package(
   Microsoft.Windows.CppWinRT
   2.0.250303.1
@@ -83,6 +101,14 @@ target_include_directories(
   INTERFACE
     "${WebView2_SOURCE_DIR}/include"
     "${WebView2_BINARY_DIR}/include"
+)
+
+add_library(WebView2_Core SHARED IMPORTED GLOBAL)
+
+set_target_properties(
+  WebView2_Core
+  PROPERTIES
+  IMPORTED_LOCATION "${WebView2_SOURCE_DIR}/runtimes/win-${arch}/native_uap/Microsoft.Web.WebView2.Core.dll"
 )
 
 fetch_nuget_package(
@@ -169,8 +195,8 @@ add_library(WindowsAppSDK_Bootstrap SHARED IMPORTED GLOBAL)
 set_target_properties(
   WindowsAppSDK_Bootstrap
   PROPERTIES
-  IMPORTED_LOCATION "${WindowsAppSDK_Foundation_SOURCE_DIR}/runtimes/win-arm64/native/Microsoft.WindowsAppRuntime.Bootstrap.dll"
-  IMPORTED_IMPLIB "${WindowsAppSDK_Foundation_SOURCE_DIR}/lib/native/arm64/Microsoft.WindowsAppRuntime.Bootstrap.lib"
+  IMPORTED_LOCATION "${WindowsAppSDK_Foundation_SOURCE_DIR}/runtimes/win-${arch}/native/Microsoft.WindowsAppRuntime.Bootstrap.dll"
+  IMPORTED_IMPLIB "${WindowsAppSDK_Foundation_SOURCE_DIR}/lib/native/${arch}/Microsoft.WindowsAppRuntime.Bootstrap.lib"
 )
 
 fetch_nuget_package(
