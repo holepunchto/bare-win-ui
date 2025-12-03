@@ -126,18 +126,6 @@ static void
 bare__launch() {
   int err;
 
-  err = uv_barrier_init(&bare__platform_ready, 2);
-  assert(err == 0);
-
-  err = uv_thread_create(&bare__platform_thread, bare__on_platform_thread, nullptr);
-  assert(err == 0);
-
-  uv_barrier_wait(&bare__platform_ready);
-
-  uv_barrier_destroy(&bare__platform_ready);
-
-  bare__loop = uv_default_loop();
-
   err = uv_async_init(bare__loop, &bare__shutdown, bare__on_shutdown);
   assert(err == 0);
 
@@ -152,22 +140,18 @@ bare__launch() {
   err = uv_exepath(bin, &len);
   assert(err == 0);
 
-  size_t dir;
-  err = path_dirname(bin, &dir, path_behavior_system);
-  assert(err == 0);
-
-  char bundle[4096];
+  char entry[4096];
   len = 4096;
 
   err = path_join(
     (const char *[]) {bin, "..", "..", "Resources", "app.bundle", nullptr},
-    bundle,
+    entry,
     &len,
     path_behavior_system
   );
   assert(err == 0);
 
-  err = bare_load(bare, bundle, nullptr, nullptr);
+  err = bare_load(bare, entry, nullptr, nullptr);
   (void) err;
 
   bare__dispatcher = DispatcherQueue::GetForCurrentThread();
@@ -198,7 +182,62 @@ main(int argc, char *argv[]) {
   err = rlimit_set(rlimit_open_files, rlimit_infer);
   assert(err == 0);
 
+  freopen("NUL", "r", stdin);
+  freopen("NUL", "w", stdout);
+  freopen("NUL", "w", stderr);
+
   argv = uv_setup_args(argc, argv);
+
+  err = uv_barrier_init(&bare__platform_ready, 2);
+  assert(err == 0);
+
+  err = uv_thread_create(&bare__platform_thread, bare__on_platform_thread, nullptr);
+  assert(err == 0);
+
+  uv_barrier_wait(&bare__platform_ready);
+
+  uv_barrier_destroy(&bare__platform_ready);
+
+  bare__loop = uv_default_loop();
+
+  size_t len;
+
+  char bin[4096];
+  len = sizeof(bin);
+
+  err = uv_exepath(bin, &len);
+  assert(err == 0);
+
+  char preflight[4096];
+  len = 4096;
+
+  err = path_join(
+    (const char *[]) {bin, "..", "..", "Resources", "preflight.bundle", nullptr},
+    preflight,
+    &len,
+    path_behavior_system
+  );
+  assert(err == 0);
+
+  uv_fs_t fs;
+  err = uv_fs_access(bare__loop, &fs, preflight, R_OK, nullptr);
+
+  if (err == 0) {
+    err = bare_setup(bare__loop, bare__platform, nullptr, argc, const_cast<const char **>(argv), nullptr, &bare);
+    assert(err == 0);
+
+    err = bare_load(bare, preflight, nullptr, nullptr);
+    (void) err;
+
+    err = bare_run(bare, UV_RUN_DEFAULT);
+    assert(err == 0);
+
+    int exit_code;
+    err = bare_teardown(bare, UV_RUN_DEFAULT, &exit_code);
+    assert(err == 0);
+
+    if (exit_code != 0) _exit(exit_code);
+  }
 
   bare__argc = argc;
   bare__argv = argv;
@@ -206,10 +245,6 @@ main(int argc, char *argv[]) {
   init_apartment(apartment_type::single_threaded);
 
   bare__try_bootstrap_runtime();
-
-  freopen("NUL", "r", stdin);
-  freopen("NUL", "w", stdout);
-  freopen("NUL", "w", stderr);
 
   Application::Start([=](auto &&) { make<BareApp>(); });
 
