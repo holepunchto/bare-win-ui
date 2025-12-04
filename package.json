@@ -1,6 +1,6 @@
 {
   "name": "bare-win-ui",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "WinUI bindings and runtime for Bare",
   "exports": {
     "./package": "./package.json",
