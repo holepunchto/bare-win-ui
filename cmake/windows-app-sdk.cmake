@@ -94,7 +94,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WebView2} CppWinRT)
+
 add_library(WebView2 INTERFACE)
+
+add_dependencies(WebView2 ${WebView2})
 
 target_include_directories(
   WebView2
@@ -104,6 +108,8 @@ target_include_directories(
 )
 
 add_library(WebView2_Core SHARED IMPORTED GLOBAL)
+
+add_dependencies(WebView2_Core WebView2)
 
 set_target_properties(
   WebView2_Core
@@ -121,7 +127,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WindowsAppSDK_Base} CppWinRT)
+
 add_library(WindowsAppSDK_Base INTERFACE)
+
+add_dependencies(WindowsAppSDK_Base ${WindowsAppSDK_Base})
 
 target_include_directories(
   WindowsAppSDK_Base
@@ -141,7 +151,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WindowsAppSDK_InteractiveExperiences} CppWinRT)
+
 add_library(WindowsAppSDK_InteractiveExperiences INTERFACE)
+
+add_dependencies(WindowsAppSDK_InteractiveExperiences ${WindowsAppSDK_InteractiveExperiences})
 
 target_include_directories(
   WindowsAppSDK_InteractiveExperiences
@@ -160,7 +174,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WindowsAppSDK_Runtime} CppWinRT)
+
 add_library(WindowsAppSDK_Runtime INTERFACE)
+
+add_dependencies(WindowsAppSDK_Runtime ${WindowsAppSDK_Runtime})
 
 target_include_directories(
   WindowsAppSDK_Runtime
@@ -181,7 +199,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WindowsAppSDK_Foundation} CppWinRT)
+
 add_library(WindowsAppSDK_Foundation INTERFACE)
+
+add_dependencies(WindowsAppSDK_Foundation ${WindowsAppSDK_Foundation} WindowsAppSDK_InteractiveExperiences)
 
 target_include_directories(
   WindowsAppSDK_Foundation
@@ -191,6 +213,8 @@ target_include_directories(
 )
 
 add_library(WindowsAppSDK_Bootstrap SHARED IMPORTED GLOBAL)
+
+add_dependencies(WindowsAppSDK_Bootstrap WindowsAppSDK_Foundation)
 
 set_target_properties(
   WindowsAppSDK_Bootstrap
@@ -210,7 +234,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WindowsAppSDK_Widgets} CppWinRT)
+
 add_library(WindowsAppSDK_Widgets INTERFACE)
+
+add_dependencies(WindowsAppSDK_Widgets ${WindowsAppSDK_Widgets})
 
 target_include_directories(
   WindowsAppSDK_Widgets
@@ -233,7 +261,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WindowsAppSDK_WinUI} CppWinRT)
+
 add_library(WindowsAppSDK_WinUI INTERFACE)
+
+add_dependencies(WindowsAppSDK_WinUI ${WindowsAppSDK_WinUI} WebView2 WindowsAppSDK_InteractiveExperiences WindowsAppSDK_Foundation)
 
 target_include_directories(
   WindowsAppSDK_WinUI
@@ -252,7 +284,11 @@ fetch_nuget_package(
     -output "<BINARY_DIR>/include"
 )
 
+add_dependencies(${WindowsAppSDK} CppWinRT)
+
 add_library(WindowsAppSDK INTERFACE)
+
+add_dependencies(WindowsAppSDK ${WindowsAppSDK})
 
 target_include_directories(
   WindowsAppSDK
