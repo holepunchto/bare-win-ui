@@ -301,6 +301,7 @@ target_link_libraries(
   WindowsAppSDK
   INTERFACE
     WebView2
+    WindowsApp
     WindowsAppSDK_Base
     WindowsAppSDK_InteractiveExperiences
     WindowsAppSDK_Runtime
