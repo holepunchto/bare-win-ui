@@ -7,7 +7,6 @@
 #include <bare.h>
 #include <io.h>
 #include <js.h>
-#include <log.h>
 #include <path.h>
 #include <rlimit.h>
 #include <uv.h>
@@ -166,9 +165,6 @@ struct BareApp : public ApplicationT<BareApp> {
 int
 main(int argc, char *argv[]) {
   int err;
-
-  err = log_open("bare", 0);
-  assert(err == 0);
 
   err = rlimit_set(rlimit_open_files, rlimit_infer);
   assert(err == 0);
