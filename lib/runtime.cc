@@ -173,6 +173,8 @@ main(int argc, char *argv[]) {
   freopen("NUL", "w", stdout);
   freopen("NUL", "w", stderr);
 
+  uv_disable_stdio_inheritance();
+
   argv = uv_setup_args(argc, argv);
 
   err = uv_barrier_init(&bare__platform_ready, 2);
