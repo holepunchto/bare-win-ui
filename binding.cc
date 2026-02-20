@@ -36,16 +36,6 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("webViewOpenDevToolsWindow", bare_win_ui_web_view_open_dev_tools_window)
 #undef V
 
-#define V(name, n) \
-  { \
-    js_value_t *val; \
-    err = js_create_int32(env, n, &val); \
-    assert(err == 0); \
-    err = js_set_named_property(env, exports, name, val); \
-    assert(err == 0); \
-  }
-#undef V
-
   return exports;
 }
 
