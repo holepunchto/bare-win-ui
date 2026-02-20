@@ -3,6 +3,7 @@
 #include <js.h>
 #include <utf.h>
 
+#include "lib/package-manager.h"
 #include "lib/web-view.h"
 #include "lib/window.h"
 
@@ -18,6 +19,9 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
     err = js_set_named_property(env, exports, name, val); \
     assert(err == 0); \
   }
+
+  V("packageManagerInit", bare_win_ui_package_manager_init)
+  V("packageManagerAddPackage", bare_win_ui_package_manager_add_package)
 
   V("windowInit", bare_win_ui_window_init)
   V("windowTitle", bare_win_ui_window_title)

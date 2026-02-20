@@ -14,6 +14,7 @@
 #include <winrt/windows.foundation.collections.h>
 #include <winrt/windows.foundation.h>
 #include <winrt/windows.graphics.h>
+#include <winrt/windows.management.deployment.h>
 #include <winrt/windows.media.core.h>
 #include <winrt/windows.media.h>
 #include <winrt/windows.storage.streams.h>
@@ -44,6 +45,7 @@ using namespace winrt;
 
 using namespace Windows::Foundation;
 using namespace Windows::Graphics;
+using namespace Windows::Management::Deployment;
 using namespace Windows::Media;
 using namespace Windows::Media::Core;
 using namespace Windows::Storage::Streams;
