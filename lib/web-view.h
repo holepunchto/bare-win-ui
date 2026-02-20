@@ -74,36 +74,21 @@ bare_win_ui_web_view_init(js_env_t *env, js_callback_info_t *info) {
   err = js_create_reference(env, argv[1], 1, &web_view->on_ready);
   assert(err == 0);
 
-  web_view->handle.CoreWebView2Initialized([=](auto &, auto &) {
-    bare_win_ui_web_view__on_ready(web_view);
-  });
-
   js_value_t *result;
   err = js_create_external(env, web_view, bare_win_ui_web_view__on_release, nullptr, &result);
   assert(err == 0);
 
+  auto req = web_view->handle.EnsureCoreWebView2Async();
+
+  DispatcherQueue dispatcher = DispatcherQueue::GetForCurrentThread();
+
+  req.Completed([=](auto &, auto &) {
+    dispatcher.TryEnqueue([=] {
+      bare_win_ui_web_view__on_ready(web_view);
+    });
+  });
+
   return result;
-}
-
-static js_value_t *
-bare_win_ui_web_view_ensure_ready(js_env_t *env, js_callback_info_t *info) {
-  int err;
-
-  size_t argc = 1;
-  js_value_t *argv[1];
-
-  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
-  assert(err == 0);
-
-  assert(argc == 1);
-
-  bare_win_ui_web_view_t *web_view;
-  err = js_get_value_external(env, argv[0], (void **) &web_view);
-  assert(err == 0);
-
-  web_view->handle.EnsureCoreWebView2Async();
-
-  return nullptr;
 }
 
 static js_value_t *
