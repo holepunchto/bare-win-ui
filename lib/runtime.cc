@@ -187,6 +187,8 @@ main(int argc, char *argv[]) {
 
   uv_barrier_destroy(&bare__platform_ready);
 
+  init_apartment(apartment_type::single_threaded);
+
   bare__loop = uv_default_loop();
 
   size_t len;
@@ -233,8 +235,6 @@ main(int argc, char *argv[]) {
 
   err = bare_setup(bare__loop, bare__platform, nullptr, argc, const_cast<const char **>(argv), nullptr, &bare);
   assert(err == 0);
-
-  init_apartment(apartment_type::single_threaded);
 
   bare__try_bootstrap_runtime();
 
