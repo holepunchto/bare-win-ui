@@ -116,6 +116,23 @@ bare__terminate(void) {
   PostQueuedCompletionStatus(bare__loop->iocp, 0, 0, nullptr);
 
   bare__poller.join();
+
+  err = bare_run(bare, UV_RUN_DEFAULT);
+  assert(err == 0);
+
+  int exit_code;
+  err = bare_teardown(bare, UV_RUN_DEFAULT, &exit_code);
+  assert(err == 0);
+
+  err = uv_loop_close(bare__loop);
+  assert(err == 0);
+
+  err = uv_async_send(&bare__platform_shutdown);
+  assert(err == 0);
+
+  uv_thread_join(&bare__platform_thread);
+
+  if (exit_code != 0) _exit(exit_code);
 }
 
 static void
