@@ -151,7 +151,7 @@ bare__launch() {
   len = 4096;
 
   err = path_join(
-    (const char *[]) {bin, "..", "..", "Resources", "app.bundle", nullptr},
+    (const char *[]) {bin, "..", "app.bundle", nullptr},
     entry,
     &len,
     path_behavior_system
@@ -220,7 +220,7 @@ main(int argc, char *argv[]) {
   len = 4096;
 
   err = path_join(
-    (const char *[]) {bin, "..", "..", "Resources", "preflight.bundle", nullptr},
+    (const char *[]) {bin, "..", "preflight.bundle", nullptr},
     preflight,
     &len,
     path_behavior_system
