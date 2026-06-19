@@ -5,7 +5,7 @@ find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(bare_win_ui C CXX)
 
-fetch_package("github:holepunchto/bare@1.25.0")
+fetch_package("github:holepunchto/bare@1.29.4")
 fetch_package("github:holepunchto/libpath")
 
 include(cmake/windows-app-sdk.cmake)
