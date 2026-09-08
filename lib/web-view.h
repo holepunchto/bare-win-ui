@@ -7,6 +7,9 @@
 struct bare_win_ui_web_view_t {
   WebView2 handle;
 
+  bool ready = false;
+  bool dev_tools_enabled = true;
+
   js_env_t *env;
   js_ref_t *ctx;
   js_ref_t *on_ready;
@@ -30,6 +33,12 @@ bare_win_ui_web_view__on_release(js_env_t *env, void *data, void *finalize_hint)
 static void
 bare_win_ui_web_view__on_ready(bare_win_ui_web_view_t *self) {
   int err;
+
+  auto core = self->handle.CoreWebView2();
+  if (core) {
+    core.Settings().AreDevToolsEnabled(self->dev_tools_enabled);
+    self->ready = true;
+  }
 
   auto env = self->env;
 
@@ -87,6 +96,42 @@ bare_win_ui_web_view_init(js_env_t *env, js_callback_info_t *info) {
       bare_win_ui_web_view__on_ready(web_view);
     });
   });
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_web_view_dev_tools_enabled(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  bare_win_ui_web_view_t *web_view;
+  err = js_get_value_external(env, argv[0], (void **) &web_view);
+  assert(err == 0);
+
+  js_value_t *result = nullptr;
+
+  if (argc == 1) {
+    err = js_get_boolean(env, web_view->dev_tools_enabled, &result);
+    assert(err == 0);
+  } else {
+    bool enabled;
+    err = js_get_value_bool(env, argv[1], &enabled);
+    assert(err == 0);
+
+    web_view->dev_tools_enabled = enabled;
+
+    if (web_view->ready) {
+      web_view->handle.CoreWebView2().Settings().AreDevToolsEnabled(enabled);
+    }
+  }
 
   return result;
 }
