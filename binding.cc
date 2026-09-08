@@ -32,6 +32,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("windowResizeClient", bare_win_ui_window_resize_client)
 
   V("webViewInit", bare_win_ui_web_view_init)
+  V("webViewDevToolsEnabled", bare_win_ui_web_view_dev_tools_enabled)
   V("webViewWidth", bare_win_ui_web_view_width)
   V("webViewHeight", bare_win_ui_web_view_height)
   V("webViewSource", bare_win_ui_web_view_source)
