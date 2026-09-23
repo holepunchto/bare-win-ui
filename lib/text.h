@@ -65,7 +65,11 @@ bare_win_ui_text_measure(js_env_t *env, js_callback_info_t *info) {
       auto block = bare_win_ui_text__block;
 
       block.Text(text);
-      block.FontSize(size);
+
+      // An unset size and family resolve the same defaults the drawn control
+      // will, which is the whole reason measuring goes through a `TextBlock`.
+      if (size > 0) block.FontSize(size);
+      else block.ClearValue(TextBlock::FontSizeProperty());
 
       if (has_family) block.FontFamily(FontFamily(family));
       else block.ClearValue(TextBlock::FontFamilyProperty());
