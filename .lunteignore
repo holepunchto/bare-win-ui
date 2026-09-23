@@ -1,0 +1,10 @@
+# https://github.com/holepunchto/lunte/issues/17
+lib/framework-element.d.ts
+lib/image.d.ts
+lib/package-manager.d.ts
+lib/password-box.d.ts
+lib/scroll-viewer.d.ts
+lib/text-box.d.ts
+lib/toggle-switch.d.ts
+lib/ui-element.d.ts
+lib/window.d.ts

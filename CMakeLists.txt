@@ -5,7 +5,7 @@ find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(bare_win_ui C CXX)
 
-fetch_package("github:holepunchto/bare@1.29.4")
+fetch_package("github:holepunchto/bare@1.33.5")
 fetch_package("github:holepunchto/libpath")
 
 include(cmake/windows-app-sdk.cmake)
@@ -16,6 +16,12 @@ target_sources(
   ${bare_win_ui}
   PRIVATE
     binding.cc
+)
+
+target_include_directories(
+  ${bare_win_ui}
+  PRIVATE
+    node_modules/bare-winrt-registry/lib
 )
 
 target_compile_options(
@@ -96,6 +102,7 @@ install(TARGETS bare_runtime RUNTIME DESTINATION ${target})
 install(
   FILES
     $<TARGET_FILE:WebView2_Core>
+    $<TARGET_FILE:Win2D_Canvas>
     $<TARGET_FILE:WindowsAppSDK_Bootstrap>
   DESTINATION ${target}/bare
 )

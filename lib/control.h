@@ -1,0 +1,500 @@
+#pragma once
+
+#include <assert.h>
+#include <js.h>
+
+#include "bridging.h"
+
+// Focus can be moved to a control but never cleared, so letting go of it means
+// moving it on, which is what `FocusManager` does.
+static js_value_t *
+bare_win_ui_control_focus(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  int32_t focus_state;
+  if (!bare_win_ui__read_int32(env, argv[1], "state", &focus_state)) return nullptr;
+
+  js_value_t *result;
+
+  try {
+    err = js_get_boolean(env, control.Focus(static_cast<FocusState>(focus_state)), &result);
+    assert(err == 0);
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+// A desktop app has no single focus scope, so the search is told which tree to
+// move within: the content of the root the element is in.
+static js_value_t *
+bare_win_ui_focus_manager_try_move_focus(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  UIElement element = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &element) < 0) return nullptr;
+
+  int32_t direction;
+  if (!bare_win_ui__read_int32(env, argv[1], "direction", &direction)) return nullptr;
+
+  js_value_t *result;
+
+  try {
+    FindNextElementOptions options;
+    options.SearchRoot(element.XamlRoot().Content());
+
+    auto moved = FocusManager::TryMoveFocus(static_cast<FocusNavigationDirection>(direction), options);
+
+    err = js_get_boolean(env, moved, &result);
+    assert(err == 0);
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+#define BARE_WIN_UI_CONTROL(name, get, set) \
+  static js_value_t * \
+  bare_win_ui_control_##name(js_env_t *env, js_callback_info_t *info) { \
+    int err; \
+\
+    size_t argc = 2; \
+    js_value_t *argv[2]; \
+\
+    bare_win_ui_state_t *state; \
+    err = js_get_callback_info(env, info, &argc, argv, nullptr, (void **) &state); \
+    assert(err == 0); \
+\
+    assert(argc == 1 || argc == 2); \
+\
+    Control control = nullptr; \
+    if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr; \
+\
+    js_value_t *result = nullptr; \
+\
+    try { \
+      if (argc == 1) { \
+        result = get; \
+      } else { \
+        set \
+      } \
+    } catch (hresult_error const &error) { \
+      bare_win_ui__throw(env, error); \
+\
+      return nullptr; \
+    } \
+\
+    return result; \
+  }
+
+BARE_WIN_UI_CONTROL(
+  is_enabled,
+  bare_win_ui__from_boolean(env, control.IsEnabled()),
+  bool value;
+  if (!bare_win_ui__read_bool(env, argv[1], "isEnabled", &value)) return nullptr;
+
+  control.IsEnabled(value);
+)
+
+// A background is a property of `Panel` on a canvas and of `Control` on a text
+// box, which are different classes, so both are bound.
+BARE_WIN_UI_CONTROL(
+  background,
+  bare_win_ui__from_object(env, state, control.Background()),
+  Brush brush = nullptr;
+  if (!bare_win_ui__read_nullable(env, state, argv[1], "background", &brush)) return nullptr;
+
+  control.Background(brush);
+)
+#undef BARE_WIN_UI_CONTROL
+
+// A `Control` has its own background, border and corner radius, where a
+// `Canvas` needs composition visuals. A composition visual on a templated
+// control would fight its template.
+static js_value_t *
+bare_win_ui_control_border_brush(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_object(env, state, control.BorderBrush());
+    } else {
+      Brush brush = nullptr;
+      if (!bare_win_ui__read_nullable(env, state, argv[1], "borderBrush", &brush)) return nullptr;
+
+      control.BorderBrush(brush);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_control_use_system_focus_visuals(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_boolean(env, control.UseSystemFocusVisuals());
+    } else {
+      bool value;
+      if (!bare_win_ui__read_bool(env, argv[1], "useSystemFocusVisuals", &value)) return nullptr;
+
+      control.UseSystemFocusVisuals(value);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_control_foreground(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_object(env, state, control.Foreground());
+    } else {
+      Brush brush = nullptr;
+      if (!bare_win_ui__read_nullable(env, state, argv[1], "foreground", &brush)) return nullptr;
+
+      control.Foreground(brush);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+// Both are four values that are all the same here, so one number crosses
+// instead of four.
+static js_value_t *
+bare_win_ui_control_border_thickness(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  double thickness;
+  if (!bare_win_ui__read_double(env, argv[1], "thickness", &thickness)) return nullptr;
+
+  try {
+    control.BorderThickness(ThicknessHelper::FromUniformLength(thickness));
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return nullptr;
+}
+
+// The accessor for a named template part is protected, but at the ABI it is a
+// public interface, which is the only way in from outside the control.
+static js_value_t *
+bare_win_ui_control_template_child(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  hstring name;
+  if (!bare_win_ui__read_string(env, argv[1], "name", &name)) return nullptr;
+
+  js_value_t *result;
+
+  try {
+    auto protect = control.as<IControlProtected>();
+
+    result = bare_win_ui__from_object(env, state, protect.GetTemplateChild(name));
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+// A control's template pads its content, and an element measured by the layout
+// only has the room the layout gave it.
+static js_value_t *
+bare_win_ui_control_padding(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 5;
+  js_value_t *argv[5];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2 || argc == 5);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  try {
+    if (argc == 2) {
+      double padding;
+      if (!bare_win_ui__read_double(env, argv[1], "padding", &padding)) return nullptr;
+
+      control.Padding(ThicknessHelper::FromUniformLength(padding));
+    } else {
+      double left;
+      if (!bare_win_ui__read_double(env, argv[1], "left", &left)) return nullptr;
+
+      double top;
+      if (!bare_win_ui__read_double(env, argv[2], "top", &top)) return nullptr;
+
+      double right;
+      if (!bare_win_ui__read_double(env, argv[3], "right", &right)) return nullptr;
+
+      double bottom;
+      if (!bare_win_ui__read_double(env, argv[4], "bottom", &bottom)) return nullptr;
+
+      control.Padding(ThicknessHelper::FromLengths(left, top, right, bottom));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return nullptr;
+}
+
+static js_value_t *
+bare_win_ui_control_corner_radius(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  double radius;
+  if (!bare_win_ui__read_double(env, argv[1], "radius", &radius)) return nullptr;
+
+  try {
+    control.CornerRadius(CornerRadiusHelper::FromUniformRadius(radius));
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return nullptr;
+}
+
+static js_value_t *
+bare_win_ui_control_vertical_content_alignment(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      err = js_create_int32(env, int32_t(control.VerticalContentAlignment()), &result);
+      assert(err == 0);
+    } else {
+      int32_t alignment;
+      if (!bare_win_ui__read_int32(env, argv[1], "alignment", &alignment)) return nullptr;
+
+      control.VerticalContentAlignment(VerticalAlignment(alignment));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_control_horizontal_content_alignment(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      err = js_create_int32(env, int32_t(control.HorizontalContentAlignment()), &result);
+      assert(err == 0);
+    } else {
+      int32_t alignment;
+      if (!bare_win_ui__read_int32(env, argv[1], "alignment", &alignment)) return nullptr;
+
+      control.HorizontalContentAlignment(HorizontalAlignment(alignment));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
