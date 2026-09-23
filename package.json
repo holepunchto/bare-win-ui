@@ -36,7 +36,7 @@
   "homepage": "https://github.com/holepunchto/bare-win-ui#readme",
   "dependencies": {
     "bare-events": "^2.8.2",
-    "bare-winrt-registry": "^1.0.0",
+    "bare-winrt-registry": "^0.1.0",
     "require-asset": "^1.1.0"
   },
   "peerDependencies": {
