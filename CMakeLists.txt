@@ -18,6 +18,12 @@ target_sources(
     binding.cc
 )
 
+target_include_directories(
+  ${bare_win_ui}
+  PRIVATE
+    node_modules/bare-winrt-registry/lib
+)
+
 target_compile_options(
   ${bare_win_ui}
   PRIVATE

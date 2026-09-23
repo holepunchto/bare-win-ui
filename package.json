@@ -5,6 +5,7 @@
   "exports": {
     "./package": "./package.json",
     ".": "./index.js",
+    "./text": "./lib/text.js",
     "./runtime": "./runtime.js"
   },
   "files": [
@@ -35,6 +36,7 @@
   "homepage": "https://github.com/holepunchto/bare-win-ui#readme",
   "dependencies": {
     "bare-events": "^2.8.2",
+    "bare-winrt-registry": "^1.0.0",
     "require-asset": "^1.1.0"
   },
   "peerDependencies": {

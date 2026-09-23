@@ -23,6 +23,8 @@ static uv_loop_t *bare__loop;
 static uv_async_t bare__shutdown;
 static bare_t *bare;
 
+extern "C" __declspec(dllexport) const int bare_win_ui_runtime = 1;
+
 static DispatcherQueue bare__dispatcher = nullptr;
 static std::atomic<bool> bare__running = true;
 static std::thread bare__poller;
