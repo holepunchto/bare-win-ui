@@ -214,3 +214,64 @@ bare_win_ui_ui_element_event_mask(js_env_t *env, js_callback_info_t *info) {
 
   return nullptr;
 }
+
+static js_value_t *
+bare_win_ui_ui_element_measure(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 3;
+  js_value_t *argv[3];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 3);
+
+  UIElement element = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &element) < 0) return nullptr;
+
+  double width, height;
+
+  if (!bare_win_ui__read_double(env, argv[1], "width", &width)) return nullptr;
+  if (!bare_win_ui__read_double(env, argv[2], "height", &height)) return nullptr;
+
+  try {
+    element.Measure(Size(static_cast<float>(width), static_cast<float>(height)));
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return nullptr;
+}
+
+static js_value_t *
+bare_win_ui_ui_element_desired_size(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  UIElement element = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &element) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    auto size = element.DesiredSize();
+
+    result = bare_win_ui__from_fields(env, {{"width", size.Width}, {"height", size.Height}});
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}

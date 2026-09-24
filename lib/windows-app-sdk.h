@@ -21,6 +21,7 @@
 #include <winrt/windows.storage.streams.h>
 #include <winrt/windows.devices.input.h>
 #include <winrt/windows.ui.h>
+#include <winrt/windows.ui.text.h>
 
 // Headers for system UI interop APIs.
 // https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/win32/_uiinterop/

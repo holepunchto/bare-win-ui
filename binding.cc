@@ -15,10 +15,12 @@
 #include "lib/compositor.h"
 #include "lib/element-composition-preview.h"
 #include "lib/font-family.h"
+#include "lib/inline-collection.h"
 #include "lib/framework-element.h"
 #include "lib/headless.h"
 #include "lib/package-manager.h"
 #include "lib/panel.h"
+#include "lib/run.h"
 #include "lib/shape-visual.h"
 #include "lib/solid-color-brush.h"
 #include "lib/text.h"
@@ -67,6 +69,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("packageManagerAddPackage", bare_win_ui_package_manager_add_package)
 
   T("uiElementOpacity", bare_win_ui_ui_element_opacity, bare_win_ui_ui_element_opacity_typed, js_object, js_uint32, js_float64)
+  V("uiElementMeasure", bare_win_ui_ui_element_measure)
+  V("uiElementDesiredSize", bare_win_ui_ui_element_desired_size)
 
   T("frameworkElementWidth", bare_win_ui_framework_element_width, bare_win_ui_framework_element_width_typed, js_object, js_uint32, js_float64)
   T("frameworkElementHeight", bare_win_ui_framework_element_height, bare_win_ui_framework_element_height_typed, js_object, js_uint32, js_float64)
@@ -98,6 +102,19 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("textBlockForeground", bare_win_ui_text_block_foreground)
   V("textBlockTextAlignment", bare_win_ui_text_block_text_alignment)
   V("textBlockTextWrapping", bare_win_ui_text_block_text_wrapping)
+  V("textBlockInlines", bare_win_ui_text_block_inlines)
+
+  V("inlineCollectionSize", bare_win_ui_inline_collection_size)
+  V("inlineCollectionAppend", bare_win_ui_inline_collection_append)
+  V("inlineCollectionClear", bare_win_ui_inline_collection_clear)
+
+  V("runInit", bare_win_ui_run_init)
+  V("runText", bare_win_ui_run_text)
+  V("runFontSize", bare_win_ui_run_font_size)
+  V("runFontFamily", bare_win_ui_run_font_family)
+  V("runFontWeight", bare_win_ui_run_font_weight)
+  V("runFontStyle", bare_win_ui_run_font_style)
+  V("runForeground", bare_win_ui_run_foreground)
 
   V("fontFamilyInit", bare_win_ui_font_family_init)
   V("fontFamilySource", bare_win_ui_font_family_source)
@@ -203,6 +220,10 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_ALIGNMENT_END", TextAlignment::End)
   V("TEXT_ALIGNMENT_JUSTIFY", TextAlignment::Justify)
   V("TEXT_ALIGNMENT_DETECT_FROM_CONTENT", TextAlignment::DetectFromContent)
+
+  V("FONT_STYLE_NORMAL", Windows::UI::Text::FontStyle::Normal)
+  V("FONT_STYLE_OBLIQUE", Windows::UI::Text::FontStyle::Oblique)
+  V("FONT_STYLE_ITALIC", Windows::UI::Text::FontStyle::Italic)
 
   V("TEXT_WRAPPING_NO_WRAP", TextWrapping::NoWrap)
   V("TEXT_WRAPPING_WRAP", TextWrapping::Wrap)
