@@ -112,6 +112,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("windowClose", bare_win_ui_window_close)
   V("windowResize", bare_win_ui_window_resize)
   V("windowResizeClient", bare_win_ui_window_resize_client)
+  V("uiElementEvents", bare_win_ui_ui_element_events)
+  V("uiElementEventMask", bare_win_ui_ui_element_event_mask)
   V("windowEvents", bare_win_ui_window_events)
   V("windowEventMask", bare_win_ui_window_event_mask)
 
@@ -186,6 +188,15 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_WRAPPING_NO_WRAP", TextWrapping::NoWrap)
   V("TEXT_WRAPPING_WRAP", TextWrapping::Wrap)
   V("TEXT_WRAPPING_WRAP_WHOLE_WORDS", TextWrapping::WrapWholeWords)
+
+  V("UI_ELEMENT_EVENT_POINTER_PRESSED", bare_win_ui_ui_element_event_pointer_pressed)
+  V("UI_ELEMENT_EVENT_POINTER_RELEASED", bare_win_ui_ui_element_event_pointer_released)
+  V("UI_ELEMENT_EVENT_POINTER_MOVED", bare_win_ui_ui_element_event_pointer_moved)
+  V("UI_ELEMENT_EVENT_POINTER_CANCELED", bare_win_ui_ui_element_event_pointer_canceled)
+
+  V("POINTER_DEVICE_TYPE_TOUCH", int32_t(Windows::Devices::Input::PointerDeviceType::Touch))
+  V("POINTER_DEVICE_TYPE_PEN", int32_t(Windows::Devices::Input::PointerDeviceType::Pen))
+  V("POINTER_DEVICE_TYPE_MOUSE", int32_t(Windows::Devices::Input::PointerDeviceType::Mouse))
 
   V("WINDOW_EVENT_SIZE_CHANGED", bare_win_ui_window_event_size_changed)
 #undef V

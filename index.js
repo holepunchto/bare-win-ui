@@ -13,6 +13,8 @@ exports.SolidColorBrush = require('./lib/solid-color-brush')
 exports.WebView2 = require('./lib/web-view2')
 exports.Window = require('./lib/window')
 
+exports.constants = require('./lib/constants')
+
 exports.Compositor = require('./lib/compositor')
 exports.CompositionObject = require('./lib/composition-object')
 exports.Visual = require('./lib/visual')

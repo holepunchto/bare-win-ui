@@ -19,6 +19,7 @@
 #include <winrt/windows.media.core.h>
 #include <winrt/windows.media.h>
 #include <winrt/windows.storage.streams.h>
+#include <winrt/windows.devices.input.h>
 #include <winrt/windows.ui.h>
 
 // Headers for system UI interop APIs.
@@ -32,6 +33,7 @@
 
 #include <winrt/microsoft.ui.composition.h>
 #include <winrt/microsoft.ui.dispatching.h>
+#include <winrt/microsoft.ui.input.h>
 #include <winrt/microsoft.ui.interop.h>
 #include <winrt/microsoft.ui.windowing.h>
 #include <winrt/microsoft.ui.xaml.controls.h>
@@ -39,6 +41,7 @@
 #include <winrt/microsoft.ui.xaml.documents.h>
 #include <winrt/microsoft.ui.xaml.h>
 #include <winrt/microsoft.ui.xaml.hosting.h>
+#include <winrt/microsoft.ui.xaml.input.h>
 #include <winrt/microsoft.ui.xaml.markup.h>
 #include <winrt/microsoft.ui.xaml.media.h>
 #include <winrt/microsoft.ui.xaml.media.imaging.h>
@@ -64,6 +67,7 @@ using namespace Microsoft::UI::Xaml;
 using namespace Microsoft::UI::Xaml::Controls;
 using namespace Microsoft::UI::Xaml::Documents;
 using namespace Microsoft::UI::Xaml::Hosting;
+using namespace Microsoft::UI::Xaml::Input;
 using namespace Microsoft::UI::Xaml::Markup;
 using namespace Microsoft::UI::Xaml::Media;
 using namespace Microsoft::UI::Xaml::Media::Imaging;
