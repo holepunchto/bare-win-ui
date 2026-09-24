@@ -54,8 +54,10 @@ bare_win_ui_scroll_viewer_events(js_env_t *env, js_callback_info_t *info) {
   return result;
 }
 
+// What the event itself carries is whether the view is still moving; where it
+// moved to is read from the viewer, as it is anywhere else.
 static void
-bare_win_ui_scroll_viewer__on_view_changed(bare_win_ui_scroll_viewer_events_t *events, IInspectable const &sender) {
+bare_win_ui_scroll_viewer__on_view_changed(bare_win_ui_scroll_viewer_events_t *events, bool intermediate) {
   int err;
 
   auto env = events->env;
@@ -64,14 +66,11 @@ bare_win_ui_scroll_viewer__on_view_changed(bare_win_ui_scroll_viewer_events_t *e
   err = js_open_handle_scope(env, &scope);
   assert(err == 0);
 
-  auto viewer = sender.as<ScrollViewer>();
+  js_value_t *argv[1];
+  err = js_get_boolean(env, intermediate, &argv[0]);
+  assert(err == 0);
 
-  js_value_t *argv[2] = {
-    bare_win_ui__from_double(env, viewer.HorizontalOffset()),
-    bare_win_ui__from_double(env, viewer.VerticalOffset()),
-  };
-
-  bare_win_ui__emit(env, events->ctx, "_onviewchanged", 2, argv);
+  bare_win_ui__emit(env, events->ctx, "_onviewchanged", 1, argv);
 
   err = js_close_handle_scope(env, scope);
   assert(err == 0);
@@ -103,8 +102,8 @@ bare_win_ui_scroll_viewer_event_mask(js_env_t *env, js_callback_info_t *info) {
     if ((mask & bare_win_ui_scroll_viewer_event_view_changed) == 0) {
       events->view_changed.revoke();
     } else if (!events->view_changed) {
-      events->view_changed = viewer.ViewChanged(auto_revoke, [events](IInspectable const &sender, ScrollViewerViewChangedEventArgs const &) {
-        bare_win_ui_scroll_viewer__on_view_changed(events, sender);
+      events->view_changed = viewer.ViewChanged(auto_revoke, [events](IInspectable const &, ScrollViewerViewChangedEventArgs const &args) {
+        bare_win_ui_scroll_viewer__on_view_changed(events, args.IsIntermediate());
       });
     }
   } catch (hresult_error const &error) {
@@ -164,49 +163,8 @@ bare_win_ui_scroll_viewer_content(js_env_t *env, js_callback_info_t *info) {
   return result;
 }
 
-// The offsets are read from the viewer and written through `ChangeView`, which
-// is the only way it accepts one.
 static js_value_t *
-bare_win_ui_scroll_viewer_offset(js_env_t *env, js_callback_info_t *info) {
-  int err;
-
-  size_t argc = 3;
-  js_value_t *argv[3];
-
-  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
-  assert(err == 0);
-
-  assert(argc == 1 || argc == 3);
-
-  ScrollViewer viewer = nullptr;
-  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
-
-  js_value_t *result = nullptr;
-
-  try {
-    if (argc == 1) {
-      result = bare_win_ui__from_point(env, viewer.HorizontalOffset(), viewer.VerticalOffset());
-    } else {
-      double x, y;
-
-      if (!bare_win_ui__read_double(env, argv[1], "x", &x)) return nullptr;
-      if (!bare_win_ui__read_double(env, argv[2], "y", &y)) return nullptr;
-
-      viewer.ChangeView(x, y, nullptr, true);
-    }
-  } catch (hresult_error const &error) {
-    bare_win_ui__throw(env, error);
-
-    return nullptr;
-  }
-
-  return result;
-}
-
-// What the viewer thinks it holds against what it can show, which is what
-// decides whether there is anything to scroll at all.
-static js_value_t *
-bare_win_ui_scroll_viewer_extent(js_env_t *env, js_callback_info_t *info) {
+bare_win_ui_scroll_viewer_horizontal_offset(js_env_t *env, js_callback_info_t *info) {
   int err;
 
   size_t argc = 1;
@@ -220,24 +178,10 @@ bare_win_ui_scroll_viewer_extent(js_env_t *env, js_callback_info_t *info) {
   ScrollViewer viewer = nullptr;
   if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
 
-  js_value_t *result;
-  err = js_create_object(env, &result);
-  assert(err == 0);
+  js_value_t *result = nullptr;
 
   try {
-#define V(name, value) \
-  { \
-    err = js_set_named_property(env, result, name, bare_win_ui__from_double(env, value)); \
-    assert(err == 0); \
-  }
-
-    V("extentWidth", viewer.ExtentWidth())
-    V("extentHeight", viewer.ExtentHeight())
-    V("viewportWidth", viewer.ViewportWidth())
-    V("viewportHeight", viewer.ViewportHeight())
-    V("scrollableWidth", viewer.ScrollableWidth())
-    V("scrollableHeight", viewer.ScrollableHeight())
-#undef V
+    result = bare_win_ui__from_double(env, viewer.HorizontalOffset());
   } catch (hresult_error const &error) {
     bare_win_ui__throw(env, error);
 
@@ -248,34 +192,380 @@ bare_win_ui_scroll_viewer_extent(js_env_t *env, js_callback_info_t *info) {
 }
 
 static js_value_t *
-bare_win_ui_scroll_viewer_scroll_mode(js_env_t *env, js_callback_info_t *info) {
+bare_win_ui_scroll_viewer_vertical_offset(js_env_t *env, js_callback_info_t *info) {
   int err;
 
-  size_t argc = 3;
-  js_value_t *argv[3];
+  size_t argc = 1;
+  js_value_t *argv[1];
 
   err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
   assert(err == 0);
 
-  assert(argc == 3);
+  assert(argc == 1);
 
   ScrollViewer viewer = nullptr;
   if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
 
-  bool horizontal, vertical;
-
-  if (!bare_win_ui__read_bool(env, argv[1], "horizontal", &horizontal)) return nullptr;
-  if (!bare_win_ui__read_bool(env, argv[2], "vertical", &vertical)) return nullptr;
+  js_value_t *result = nullptr;
 
   try {
-    viewer.HorizontalScrollMode(horizontal ? ScrollMode::Auto : ScrollMode::Disabled);
-    viewer.VerticalScrollMode(vertical ? ScrollMode::Auto : ScrollMode::Disabled);
-
-    viewer.HorizontalScrollBarVisibility(horizontal ? ScrollBarVisibility::Auto : ScrollBarVisibility::Disabled);
-    viewer.VerticalScrollBarVisibility(vertical ? ScrollBarVisibility::Auto : ScrollBarVisibility::Disabled);
+    result = bare_win_ui__from_double(env, viewer.VerticalOffset());
   } catch (hresult_error const &error) {
     bare_win_ui__throw(env, error);
+
+    return nullptr;
   }
 
-  return nullptr;
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_extent_width(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    result = bare_win_ui__from_double(env, viewer.ExtentWidth());
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_extent_height(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    result = bare_win_ui__from_double(env, viewer.ExtentHeight());
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_viewport_width(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    result = bare_win_ui__from_double(env, viewer.ViewportWidth());
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_viewport_height(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    result = bare_win_ui__from_double(env, viewer.ViewportHeight());
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_scrollable_width(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    result = bare_win_ui__from_double(env, viewer.ScrollableWidth());
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_scrollable_height(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    result = bare_win_ui__from_double(env, viewer.ScrollableHeight());
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+// The only way a `ScrollViewer` accepts an offset, and it takes each of the
+// three as a reference so that a caller can leave one where it is.
+static js_value_t *
+bare_win_ui_scroll_viewer_change_view(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 5;
+  js_value_t *argv[5];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 5);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  IReference<double> horizontal = nullptr;
+  if (!bare_win_ui__read_optional<double>(env, argv[1], "horizontalOffset", &horizontal)) return nullptr;
+
+  IReference<double> vertical = nullptr;
+  if (!bare_win_ui__read_optional<double>(env, argv[2], "verticalOffset", &vertical)) return nullptr;
+
+  IReference<float> zoom = nullptr;
+  if (!bare_win_ui__read_optional<float>(env, argv[3], "zoomFactor", &zoom)) return nullptr;
+
+  bool disable_animation;
+  if (!bare_win_ui__read_bool(env, argv[4], "disableAnimation", &disable_animation)) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    err = js_get_boolean(env, viewer.ChangeView(horizontal, vertical, zoom, disable_animation), &result);
+    assert(err == 0);
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_horizontal_scroll_mode(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_int32(env, int32_t(viewer.HorizontalScrollMode()));
+    } else {
+      int32_t value;
+      if (!bare_win_ui__read_int32(env, argv[1], "horizontalScrollMode", &value)) return nullptr;
+
+      viewer.HorizontalScrollMode(ScrollMode(value));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_vertical_scroll_mode(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_int32(env, int32_t(viewer.VerticalScrollMode()));
+    } else {
+      int32_t value;
+      if (!bare_win_ui__read_int32(env, argv[1], "verticalScrollMode", &value)) return nullptr;
+
+      viewer.VerticalScrollMode(ScrollMode(value));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_horizontal_scroll_bar_visibility(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_int32(env, int32_t(viewer.HorizontalScrollBarVisibility()));
+    } else {
+      int32_t value;
+      if (!bare_win_ui__read_int32(env, argv[1], "horizontalScrollBarVisibility", &value)) return nullptr;
+
+      viewer.HorizontalScrollBarVisibility(ScrollBarVisibility(value));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_scroll_viewer_vertical_scroll_bar_visibility(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  ScrollViewer viewer = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &viewer) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_int32(env, int32_t(viewer.VerticalScrollBarVisibility()));
+    } else {
+      int32_t value;
+      if (!bare_win_ui__read_int32(env, argv[1], "verticalScrollBarVisibility", &value)) return nullptr;
+
+      viewer.VerticalScrollBarVisibility(ScrollBarVisibility(value));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
 }

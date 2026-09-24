@@ -115,9 +115,19 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("windowResizeClient", bare_win_ui_window_resize_client)
   V("scrollViewerInit", bare_win_ui_scroll_viewer_init)
   V("scrollViewerContent", bare_win_ui_scroll_viewer_content)
-  V("scrollViewerOffset", bare_win_ui_scroll_viewer_offset)
-  V("scrollViewerScrollMode", bare_win_ui_scroll_viewer_scroll_mode)
-  V("scrollViewerExtent", bare_win_ui_scroll_viewer_extent)
+  V("scrollViewerHorizontalOffset", bare_win_ui_scroll_viewer_horizontal_offset)
+  V("scrollViewerVerticalOffset", bare_win_ui_scroll_viewer_vertical_offset)
+  V("scrollViewerExtentWidth", bare_win_ui_scroll_viewer_extent_width)
+  V("scrollViewerExtentHeight", bare_win_ui_scroll_viewer_extent_height)
+  V("scrollViewerViewportWidth", bare_win_ui_scroll_viewer_viewport_width)
+  V("scrollViewerViewportHeight", bare_win_ui_scroll_viewer_viewport_height)
+  V("scrollViewerScrollableWidth", bare_win_ui_scroll_viewer_scrollable_width)
+  V("scrollViewerScrollableHeight", bare_win_ui_scroll_viewer_scrollable_height)
+  V("scrollViewerChangeView", bare_win_ui_scroll_viewer_change_view)
+  V("scrollViewerHorizontalScrollMode", bare_win_ui_scroll_viewer_horizontal_scroll_mode)
+  V("scrollViewerVerticalScrollMode", bare_win_ui_scroll_viewer_vertical_scroll_mode)
+  V("scrollViewerHorizontalScrollBarVisibility", bare_win_ui_scroll_viewer_horizontal_scroll_bar_visibility)
+  V("scrollViewerVerticalScrollBarVisibility", bare_win_ui_scroll_viewer_vertical_scroll_bar_visibility)
   V("scrollViewerEvents", bare_win_ui_scroll_viewer_events)
   V("scrollViewerEventMask", bare_win_ui_scroll_viewer_event_mask)
 
@@ -199,6 +209,15 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_WRAPPING_WRAP_WHOLE_WORDS", TextWrapping::WrapWholeWords)
 
   V("SCROLL_VIEWER_EVENT_VIEW_CHANGED", bare_win_ui_scroll_viewer_event_view_changed)
+
+  V("SCROLL_VIEWER_SCROLL_MODE_DISABLED", ScrollMode::Disabled)
+  V("SCROLL_VIEWER_SCROLL_MODE_ENABLED", ScrollMode::Enabled)
+  V("SCROLL_VIEWER_SCROLL_MODE_AUTO", ScrollMode::Auto)
+
+  V("SCROLL_VIEWER_SCROLL_BAR_VISIBILITY_DISABLED", ScrollBarVisibility::Disabled)
+  V("SCROLL_VIEWER_SCROLL_BAR_VISIBILITY_AUTO", ScrollBarVisibility::Auto)
+  V("SCROLL_VIEWER_SCROLL_BAR_VISIBILITY_HIDDEN", ScrollBarVisibility::Hidden)
+  V("SCROLL_VIEWER_SCROLL_BAR_VISIBILITY_VISIBLE", ScrollBarVisibility::Visible)
 
   V("UI_ELEMENT_EVENT_POINTER_PRESSED", bare_win_ui_ui_element_event_pointer_pressed)
   V("UI_ELEMENT_EVENT_POINTER_RELEASED", bare_win_ui_ui_element_event_pointer_released)

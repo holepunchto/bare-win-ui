@@ -150,6 +150,31 @@ bare_win_ui__read_nullable(js_env_t *env, js_value_t *value, const char *name, T
   return bare_winrt__read_type<T>(env, value, name, result) == 0;
 }
 
+// A WinRT method taking an `IReference` is taking a value a caller is free to
+// leave alone, which is what null means on the way in.
+template <typename T>
+static bool
+bare_win_ui__read_optional(js_env_t *env, js_value_t *value, const char *name, IReference<T> *result) {
+  int err;
+
+  js_value_type_t type;
+  err = js_typeof(env, value, &type);
+  assert(err == 0);
+
+  if (type == js_null || type == js_undefined) {
+    *result = nullptr;
+
+    return true;
+  }
+
+  double number;
+  if (!bare_win_ui__read_double(env, value, name, &number)) return false;
+
+  *result = static_cast<T>(number);
+
+  return true;
+}
+
 static js_value_t *
 bare_win_ui__from_object(js_env_t *env, IInspectable const &object) {
   int err;
