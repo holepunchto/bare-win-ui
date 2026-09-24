@@ -27,6 +27,7 @@
 #include "lib/ui-element-collection.h"
 #include "lib/visual.h"
 #include "lib/web-view2.h"
+#include "lib/scroll-viewer.h"
 #include "lib/window.h"
 
 static js_value_t *
@@ -112,6 +113,14 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("windowClose", bare_win_ui_window_close)
   V("windowResize", bare_win_ui_window_resize)
   V("windowResizeClient", bare_win_ui_window_resize_client)
+  V("scrollViewerInit", bare_win_ui_scroll_viewer_init)
+  V("scrollViewerContent", bare_win_ui_scroll_viewer_content)
+  V("scrollViewerOffset", bare_win_ui_scroll_viewer_offset)
+  V("scrollViewerScrollMode", bare_win_ui_scroll_viewer_scroll_mode)
+  V("scrollViewerExtent", bare_win_ui_scroll_viewer_extent)
+  V("scrollViewerEvents", bare_win_ui_scroll_viewer_events)
+  V("scrollViewerEventMask", bare_win_ui_scroll_viewer_event_mask)
+
   V("uiElementEvents", bare_win_ui_ui_element_events)
   V("uiElementEventMask", bare_win_ui_ui_element_event_mask)
   V("windowEvents", bare_win_ui_window_events)
@@ -188,6 +197,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_WRAPPING_NO_WRAP", TextWrapping::NoWrap)
   V("TEXT_WRAPPING_WRAP", TextWrapping::Wrap)
   V("TEXT_WRAPPING_WRAP_WHOLE_WORDS", TextWrapping::WrapWholeWords)
+
+  V("SCROLL_VIEWER_EVENT_VIEW_CHANGED", bare_win_ui_scroll_viewer_event_view_changed)
 
   V("UI_ELEMENT_EVENT_POINTER_PRESSED", bare_win_ui_ui_element_event_pointer_pressed)
   V("UI_ELEMENT_EVENT_POINTER_RELEASED", bare_win_ui_ui_element_event_pointer_released)

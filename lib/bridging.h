@@ -111,6 +111,27 @@ bare_win_ui__read_string(js_env_t *env, js_value_t *value, const char *name, hst
   return true;
 }
 
+static bool
+bare_win_ui__read_bool(js_env_t *env, js_value_t *value, const char *name, bool *result) {
+  int err;
+
+  js_value_type_t type;
+  err = js_typeof(env, value, &type);
+  assert(err == 0);
+
+  if (type != js_boolean) {
+    err = js_throw_type_errorf(env, nullptr, "Expected a boolean for '%s'", name);
+    assert(err == 0);
+
+    return false;
+  }
+
+  err = js_get_value_bool(env, value, result);
+  assert(err == 0);
+
+  return true;
+}
+
 template <typename T>
 static bool
 bare_win_ui__read_nullable(js_env_t *env, js_value_t *value, const char *name, T *result) {
@@ -163,6 +184,23 @@ bare_win_ui__from_double(js_env_t *env, double value) {
 
   js_value_t *result;
   err = js_create_double(env, value, &result);
+  assert(err == 0);
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui__from_point(js_env_t *env, double x, double y) {
+  int err;
+
+  js_value_t *result;
+  err = js_create_object(env, &result);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "x", bare_win_ui__from_double(env, x));
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "y", bare_win_ui__from_double(env, y));
   assert(err == 0);
 
   return result;
