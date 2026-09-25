@@ -174,11 +174,33 @@ bare__launch() {
   });
 }
 
-struct BareApp : public ApplicationT<BareApp> {
+// A control expands its template from binary markup, and instantiating a type
+// from markup goes through the application's metadata provider. An app built
+// from XAML has one generated for it; this one provides the WinUI types, which
+// are the only ones its markup can name.
+struct BareApp : public ApplicationT<BareApp, IXamlMetadataProvider> {
+  IXamlType
+  GetXamlType(TypeName const &type) {
+    return provider.GetXamlType(type);
+  }
+
+  IXamlType
+  GetXamlType(hstring const &name) {
+    return provider.GetXamlType(name);
+  }
+
+  com_array<XmlnsDefinition>
+  GetXmlnsDefinitions() {
+    return provider.GetXmlnsDefinitions();
+  }
+
   void
   OnLaunched(LaunchActivatedEventArgs const &) {
     bare__launch();
   }
+
+private:
+  XamlControlsXamlMetaDataProvider provider;
 };
 
 int

@@ -26,6 +26,9 @@
 #include "lib/shape-visual.h"
 #include "lib/solid-color-brush.h"
 #include "lib/text.h"
+#include "lib/control.h"
+#include "lib/password-box.h"
+#include "lib/text-box.h"
 #include "lib/text-block.h"
 #include "lib/ui-element.h"
 #include "lib/ui-element-collection.h"
@@ -76,6 +79,9 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   T("frameworkElementWidth", bare_win_ui_framework_element_width, bare_win_ui_framework_element_width_typed, js_object, js_uint32, js_float64)
   T("frameworkElementHeight", bare_win_ui_framework_element_height, bare_win_ui_framework_element_height_typed, js_object, js_uint32, js_float64)
+  V("frameworkElementResource", bare_win_ui_framework_element_resource)
+  V("frameworkElementMinWidth", bare_win_ui_framework_element_min_width)
+  V("frameworkElementMinHeight", bare_win_ui_framework_element_min_height)
   V("frameworkElementActualWidth", bare_win_ui_framework_element_actual_width)
   V("frameworkElementActualHeight", bare_win_ui_framework_element_actual_height)
   V("frameworkElementParent", bare_win_ui_framework_element_parent)
@@ -107,6 +113,36 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("bitmapImageUriSource", bare_win_ui_bitmap_image_uri_source)
   V("bitmapSourcePixelWidth", bare_win_ui_bitmap_source_pixel_width)
   V("bitmapSourcePixelHeight", bare_win_ui_bitmap_source_pixel_height)
+
+  V("controlFocus", bare_win_ui_control_focus)
+  V("controlIsEnabled", bare_win_ui_control_is_enabled)
+  V("controlBackground", bare_win_ui_control_background)
+  V("controlBorderBrush", bare_win_ui_control_border_brush)
+  V("controlBorderThickness", bare_win_ui_control_border_thickness)
+  V("controlTemplateChild", bare_win_ui_control_template_child)
+  V("controlPadding", bare_win_ui_control_padding)
+  V("controlCornerRadius", bare_win_ui_control_corner_radius)
+  V("focusManagerTryMoveFocus", bare_win_ui_focus_manager_try_move_focus)
+
+  V("textBoxInit", bare_win_ui_text_box_init)
+  V("textBoxEvents", bare_win_ui_text_box_events)
+  V("textBoxEventMask", bare_win_ui_text_box_event_mask)
+  V("textBoxText", bare_win_ui_text_box_text)
+  V("textBoxPlaceholderText", bare_win_ui_text_box_placeholder_text)
+  V("textBoxIsReadOnly", bare_win_ui_text_box_is_read_only)
+  V("textBoxAcceptsReturn", bare_win_ui_text_box_accepts_return)
+  V("textBoxIsSpellCheckEnabled", bare_win_ui_text_box_is_spell_check_enabled)
+  V("textBoxSelectionStart", bare_win_ui_text_box_selection_start)
+  V("textBoxSelectionLength", bare_win_ui_text_box_selection_length)
+  V("textBoxTextWrapping", bare_win_ui_text_box_text_wrapping)
+  V("textBoxInputScope", bare_win_ui_text_box_input_scope)
+
+  V("passwordBoxInit", bare_win_ui_password_box_init)
+  V("passwordBoxEvents", bare_win_ui_password_box_events)
+  V("passwordBoxEventMask", bare_win_ui_password_box_event_mask)
+  V("passwordBoxPasswordRevealMode", bare_win_ui_password_box_password_reveal_mode)
+  V("passwordBoxPassword", bare_win_ui_password_box_password)
+  V("passwordBoxPlaceholderText", bare_win_ui_password_box_placeholder_text)
 
   V("textBlockInit", bare_win_ui_text_block_init)
   V("textBlockText", bare_win_ui_text_block_text)
@@ -237,6 +273,36 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("FONT_STYLE_NORMAL", Windows::UI::Text::FontStyle::Normal)
   V("FONT_STYLE_OBLIQUE", Windows::UI::Text::FontStyle::Oblique)
   V("FONT_STYLE_ITALIC", Windows::UI::Text::FontStyle::Italic)
+
+  V("TEXT_BOX_EVENT_TEXT_CHANGING", bare_win_ui_text_box_event_text_changing)
+  V("TEXT_BOX_EVENT_TEXT_CHANGED", bare_win_ui_text_box_event_text_changed)
+  V("TEXT_BOX_EVENT_SELECTION_CHANGED", bare_win_ui_text_box_event_selection_changed)
+  V("TEXT_BOX_EVENT_GOT_FOCUS", bare_win_ui_text_box_event_got_focus)
+  V("TEXT_BOX_EVENT_LOST_FOCUS", bare_win_ui_text_box_event_lost_focus)
+  V("TEXT_BOX_EVENT_KEY_DOWN", bare_win_ui_text_box_event_key_down)
+  V("TEXT_BOX_EVENT_LOADED", bare_win_ui_text_box_event_loaded)
+
+  V("PASSWORD_BOX_EVENT_PASSWORD_CHANGED", bare_win_ui_password_box_event_password_changed)
+  V("PASSWORD_BOX_EVENT_GOT_FOCUS", bare_win_ui_password_box_event_got_focus)
+  V("PASSWORD_BOX_EVENT_LOST_FOCUS", bare_win_ui_password_box_event_lost_focus)
+  V("PASSWORD_BOX_EVENT_LOADED", bare_win_ui_password_box_event_loaded)
+
+  V("PASSWORD_REVEAL_MODE_PEEK", PasswordRevealMode::Peek)
+  V("PASSWORD_REVEAL_MODE_HIDDEN", PasswordRevealMode::Hidden)
+  V("PASSWORD_REVEAL_MODE_VISIBLE", PasswordRevealMode::Visible)
+
+  V("FOCUS_STATE_UNFOCUSED", FocusState::Unfocused)
+  V("FOCUS_STATE_POINTER", FocusState::Pointer)
+  V("FOCUS_STATE_KEYBOARD", FocusState::Keyboard)
+  V("FOCUS_STATE_PROGRAMMATIC", FocusState::Programmatic)
+
+  V("FOCUS_NAVIGATION_DIRECTION_NEXT", FocusNavigationDirection::Next)
+  V("FOCUS_NAVIGATION_DIRECTION_PREVIOUS", FocusNavigationDirection::Previous)
+  V("FOCUS_NAVIGATION_DIRECTION_UP", FocusNavigationDirection::Up)
+  V("FOCUS_NAVIGATION_DIRECTION_DOWN", FocusNavigationDirection::Down)
+  V("FOCUS_NAVIGATION_DIRECTION_LEFT", FocusNavigationDirection::Left)
+  V("FOCUS_NAVIGATION_DIRECTION_RIGHT", FocusNavigationDirection::Right)
+  V("FOCUS_NAVIGATION_DIRECTION_NONE", FocusNavigationDirection::None)
 
   V("TEXT_WRAPPING_NO_WRAP", TextWrapping::NoWrap)
   V("TEXT_WRAPPING_WRAP", TextWrapping::Wrap)

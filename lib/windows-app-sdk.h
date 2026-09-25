@@ -19,6 +19,7 @@
 #include <winrt/windows.media.core.h>
 #include <winrt/windows.media.h>
 #include <winrt/windows.storage.streams.h>
+#include <winrt/windows.system.h>
 #include <winrt/windows.devices.input.h>
 #include <winrt/windows.ui.h>
 #include <winrt/windows.ui.text.h>

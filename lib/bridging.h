@@ -232,6 +232,17 @@ bare_win_ui__from_point(js_env_t *env, double x, double y) {
 }
 
 static js_value_t *
+bare_win_ui__from_boolean(js_env_t *env, bool value) {
+  int err;
+
+  js_value_t *result;
+  err = js_get_boolean(env, value, &result);
+  assert(err == 0);
+
+  return result;
+}
+
+static js_value_t *
 bare_win_ui__from_int32(js_env_t *env, int32_t value) {
   int err;
 
