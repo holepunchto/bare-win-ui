@@ -28,6 +28,8 @@
 #include "lib/text.h"
 #include "lib/control.h"
 #include "lib/password-box.h"
+#include "lib/progress-ring.h"
+#include "lib/toggle-switch.h"
 #include "lib/text-box.h"
 #include "lib/text-block.h"
 #include "lib/ui-element.h"
@@ -117,6 +119,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("controlFocus", bare_win_ui_control_focus)
   V("controlIsEnabled", bare_win_ui_control_is_enabled)
   V("controlBackground", bare_win_ui_control_background)
+  V("controlForeground", bare_win_ui_control_foreground)
   V("controlBorderBrush", bare_win_ui_control_border_brush)
   V("controlBorderThickness", bare_win_ui_control_border_thickness)
   V("controlTemplateChild", bare_win_ui_control_template_child)
@@ -136,6 +139,15 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("textBoxSelectionLength", bare_win_ui_text_box_selection_length)
   V("textBoxTextWrapping", bare_win_ui_text_box_text_wrapping)
   V("textBoxInputScope", bare_win_ui_text_box_input_scope)
+
+  V("progressRingInit", bare_win_ui_progress_ring_init)
+  V("progressRingIsActive", bare_win_ui_progress_ring_is_active)
+
+  V("toggleSwitchInit", bare_win_ui_toggle_switch_init)
+  V("toggleSwitchEvents", bare_win_ui_toggle_switch_events)
+  V("toggleSwitchEventMask", bare_win_ui_toggle_switch_event_mask)
+  V("toggleSwitchIsOn", bare_win_ui_toggle_switch_is_on)
+  V("toggleSwitchContent", bare_win_ui_toggle_switch_content)
 
   V("passwordBoxInit", bare_win_ui_password_box_init)
   V("passwordBoxEvents", bare_win_ui_password_box_events)
@@ -281,6 +293,9 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_BOX_EVENT_LOST_FOCUS", bare_win_ui_text_box_event_lost_focus)
   V("TEXT_BOX_EVENT_KEY_DOWN", bare_win_ui_text_box_event_key_down)
   V("TEXT_BOX_EVENT_LOADED", bare_win_ui_text_box_event_loaded)
+
+  V("TOGGLE_SWITCH_EVENT_TOGGLED", bare_win_ui_toggle_switch_event_toggled)
+  V("TOGGLE_SWITCH_EVENT_LOADED", bare_win_ui_toggle_switch_event_loaded)
 
   V("PASSWORD_BOX_EVENT_PASSWORD_CHANGED", bare_win_ui_password_box_event_password_changed)
   V("PASSWORD_BOX_EVENT_GOT_FOCUS", bare_win_ui_password_box_event_got_focus)

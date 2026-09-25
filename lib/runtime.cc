@@ -196,6 +196,13 @@ struct BareApp : public ApplicationT<BareApp, IXamlMetadataProvider> {
 
   void
   OnLaunched(LaunchActivatedEventArgs const &) {
+    // The theme dictionaries every control's style reads its brushes out of,
+    // which an app written in XAML gets from `<XamlControlsResources />` in
+    // its `App.xaml`. Without them a `{ThemeResource}` in a style fails as the
+    // style is initialised. Merging them loads XAML of its own, so it has to
+    // come after the metadata provider above, not before.
+    Resources().MergedDictionaries().Append(XamlControlsResources());
+
     bare__launch();
   }
 

@@ -170,6 +170,42 @@ bare_win_ui_control_border_brush(js_env_t *env, js_callback_info_t *info) {
   return result;
 }
 
+// What a control draws with, as against what it draws on.
+static js_value_t *
+bare_win_ui_control_foreground(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_object(env, control.Foreground());
+    } else {
+      Brush brush = nullptr;
+      if (!bare_win_ui__read_nullable(env, argv[1], "foreground", &brush)) return nullptr;
+
+      control.Foreground(brush);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
 // Both are value types with four parts, and every part is the same here, so
 // one number crosses rather than four.
 static js_value_t *
