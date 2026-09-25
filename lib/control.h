@@ -170,6 +170,44 @@ bare_win_ui_control_border_brush(js_env_t *env, js_callback_info_t *info) {
   return result;
 }
 
+// The rectangle WinUI draws over a control that has the focus, which is the
+// system's own and not the template's, and so is the one a caller can turn
+// off.
+static js_value_t *
+bare_win_ui_control_use_system_focus_visuals(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_boolean(env, control.UseSystemFocusVisuals());
+    } else {
+      bool value;
+      if (!bare_win_ui__read_bool(env, argv[1], "useSystemFocusVisuals", &value)) return nullptr;
+
+      control.UseSystemFocusVisuals(value);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
 // What a control draws with, as against what it draws on.
 static js_value_t *
 bare_win_ui_control_foreground(js_env_t *env, js_callback_info_t *info) {

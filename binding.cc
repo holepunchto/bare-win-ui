@@ -119,6 +119,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("controlFocus", bare_win_ui_control_focus)
   V("controlIsEnabled", bare_win_ui_control_is_enabled)
   V("controlBackground", bare_win_ui_control_background)
+  V("controlUseSystemFocusVisuals", bare_win_ui_control_use_system_focus_visuals)
   V("controlForeground", bare_win_ui_control_foreground)
   V("controlBorderBrush", bare_win_ui_control_border_brush)
   V("controlBorderThickness", bare_win_ui_control_border_thickness)
