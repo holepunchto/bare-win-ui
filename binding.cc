@@ -160,6 +160,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("textBlockInit", bare_win_ui_text_block_init)
   V("textBlockText", bare_win_ui_text_block_text)
   V("textBlockFontSize", bare_win_ui_text_block_font_size)
+  V("textBlockLineHeight", bare_win_ui_text_block_line_height)
   V("textBlockFontFamily", bare_win_ui_text_block_font_family)
   V("textBlockForeground", bare_win_ui_text_block_foreground)
   V("textBlockTextAlignment", bare_win_ui_text_block_text_alignment)
@@ -173,6 +174,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("runInit", bare_win_ui_run_init)
   V("runText", bare_win_ui_run_text)
   V("runFontSize", bare_win_ui_run_font_size)
+  V("runCharacterSpacing", bare_win_ui_run_character_spacing)
+  V("runTextDecorations", bare_win_ui_run_text_decorations)
   V("runFontFamily", bare_win_ui_run_font_family)
   V("runFontWeight", bare_win_ui_run_font_weight)
   V("runFontStyle", bare_win_ui_run_font_style)
@@ -294,6 +297,10 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_BOX_EVENT_LOST_FOCUS", bare_win_ui_text_box_event_lost_focus)
   V("TEXT_BOX_EVENT_KEY_DOWN", bare_win_ui_text_box_event_key_down)
   V("TEXT_BOX_EVENT_LOADED", bare_win_ui_text_box_event_loaded)
+
+  V("TEXT_DECORATIONS_NONE", Windows::UI::Text::TextDecorations::None)
+  V("TEXT_DECORATIONS_UNDERLINE", Windows::UI::Text::TextDecorations::Underline)
+  V("TEXT_DECORATIONS_STRIKETHROUGH", Windows::UI::Text::TextDecorations::Strikethrough)
 
   V("TOGGLE_SWITCH_EVENT_TOGGLED", bare_win_ui_toggle_switch_event_toggled)
   V("TOGGLE_SWITCH_EVENT_LOADED", bare_win_ui_toggle_switch_event_loaded)

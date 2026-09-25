@@ -90,6 +90,74 @@ bare_win_ui_run_font_size(js_env_t *env, js_callback_info_t *info) {
   return result;
 }
 
+// WinUI spells the two lines as one flag word rather than two attributes.
+static js_value_t *
+bare_win_ui_run_text_decorations(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  Run run = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &run) < 0) return nullptr;
+
+  int32_t decorations;
+  if (!bare_win_ui__read_int32(env, argv[1], "textDecorations", &decorations)) return nullptr;
+
+  try {
+    run.TextDecorations(static_cast<Windows::UI::Text::TextDecorations>(decorations));
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return nullptr;
+}
+
+// WinUI counts the space between characters in thousandths of the font size,
+// where everything else here is in points, so the conversion belongs to
+// whoever knows the size.
+static js_value_t *
+bare_win_ui_run_character_spacing(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Run run = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &run) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_int32(env, run.CharacterSpacing());
+    } else {
+      int32_t spacing;
+      if (!bare_win_ui__read_int32(env, argv[1], "characterSpacing", &spacing)) return nullptr;
+
+      run.CharacterSpacing(spacing);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
 static js_value_t *
 bare_win_ui_run_font_family(js_env_t *env, js_callback_info_t *info) {
   int err;

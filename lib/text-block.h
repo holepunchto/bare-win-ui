@@ -90,6 +90,49 @@ bare_win_ui_text_block_font_size(js_env_t *env, js_callback_info_t *info) {
   return result;
 }
 
+// A line of nothing is a line of the font's own height, which is what zero
+// means here and what makes putting the property back possible. Stacking by
+// the block rather than by the tallest thing in it is what makes the height
+// the one that was asked for.
+static js_value_t *
+bare_win_ui_text_block_line_height(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  TextBlock text_block = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &text_block) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_double(env, text_block.LineHeight());
+    } else {
+      double height;
+      if (!bare_win_ui__read_double(env, argv[1], "lineHeight", &height)) return nullptr;
+
+      text_block.LineHeight(height);
+
+      text_block.LineStackingStrategy(
+        height == 0 ? LineStackingStrategy::MaxHeight : LineStackingStrategy::BlockLineHeight
+      );
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
 static js_value_t *
 bare_win_ui_text_block_font_family(js_env_t *env, js_callback_info_t *info) {
   int err;
