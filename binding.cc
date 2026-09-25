@@ -18,6 +18,8 @@
 #include "lib/inline-collection.h"
 #include "lib/framework-element.h"
 #include "lib/headless.h"
+#include "lib/image.h"
+#include "lib/bitmap-image.h"
 #include "lib/package-manager.h"
 #include "lib/panel.h"
 #include "lib/run.h"
@@ -94,6 +96,17 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   T("canvasSetLeft", bare_win_ui_canvas_set_left, bare_win_ui_canvas_set_left_typed, js_object, js_uint32, js_float64)
   V("canvasGetTop", bare_win_ui_canvas_get_top)
   T("canvasSetTop", bare_win_ui_canvas_set_top, bare_win_ui_canvas_set_top_typed, js_object, js_uint32, js_float64)
+
+  V("imageInit", bare_win_ui_image_init)
+  V("imageSource", bare_win_ui_image_source)
+  V("imageStretch", bare_win_ui_image_stretch)
+  V("imageEvents", bare_win_ui_image_events)
+  V("imageEventMask", bare_win_ui_image_event_mask)
+
+  V("bitmapImageInit", bare_win_ui_bitmap_image_init)
+  V("bitmapImageUriSource", bare_win_ui_bitmap_image_uri_source)
+  V("bitmapSourcePixelWidth", bare_win_ui_bitmap_source_pixel_width)
+  V("bitmapSourcePixelHeight", bare_win_ui_bitmap_source_pixel_height)
 
   V("textBlockInit", bare_win_ui_text_block_init)
   V("textBlockText", bare_win_ui_text_block_text)
@@ -228,6 +241,14 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_WRAPPING_NO_WRAP", TextWrapping::NoWrap)
   V("TEXT_WRAPPING_WRAP", TextWrapping::Wrap)
   V("TEXT_WRAPPING_WRAP_WHOLE_WORDS", TextWrapping::WrapWholeWords)
+
+  V("IMAGE_EVENT_IMAGE_OPENED", bare_win_ui_image_event_image_opened)
+  V("IMAGE_EVENT_IMAGE_FAILED", bare_win_ui_image_event_image_failed)
+
+  V("STRETCH_NONE", Stretch::None)
+  V("STRETCH_FILL", Stretch::Fill)
+  V("STRETCH_UNIFORM", Stretch::Uniform)
+  V("STRETCH_UNIFORM_TO_FILL", Stretch::UniformToFill)
 
   V("SCROLL_VIEWER_EVENT_VIEW_CHANGED", bare_win_ui_scroll_viewer_event_view_changed)
 
