@@ -316,22 +316,38 @@ static js_value_t *
 bare_win_ui_control_padding(js_env_t *env, js_callback_info_t *info) {
   int err;
 
-  size_t argc = 2;
-  js_value_t *argv[2];
+  size_t argc = 5;
+  js_value_t *argv[5];
 
   err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
   assert(err == 0);
 
-  assert(argc == 2);
+  assert(argc == 2 || argc == 5);
 
   Control control = nullptr;
   if (bare_winrt__read_type(env, argv[0], "handle", &control) < 0) return nullptr;
 
-  double padding;
-  if (!bare_win_ui__read_double(env, argv[1], "padding", &padding)) return nullptr;
-
   try {
-    control.Padding(ThicknessHelper::FromUniformLength(padding));
+    if (argc == 2) {
+      double padding;
+      if (!bare_win_ui__read_double(env, argv[1], "padding", &padding)) return nullptr;
+
+      control.Padding(ThicknessHelper::FromUniformLength(padding));
+    } else {
+      double left;
+      if (!bare_win_ui__read_double(env, argv[1], "left", &left)) return nullptr;
+
+      double top;
+      if (!bare_win_ui__read_double(env, argv[2], "top", &top)) return nullptr;
+
+      double right;
+      if (!bare_win_ui__read_double(env, argv[3], "right", &right)) return nullptr;
+
+      double bottom;
+      if (!bare_win_ui__read_double(env, argv[4], "bottom", &bottom)) return nullptr;
+
+      control.Padding(ThicknessHelper::FromLengths(left, top, right, bottom));
+    }
   } catch (hresult_error const &error) {
     bare_win_ui__throw(env, error);
 
@@ -368,4 +384,76 @@ bare_win_ui_control_corner_radius(js_env_t *env, js_callback_info_t *info) {
   }
 
   return nullptr;
+}
+
+static js_value_t *
+bare_win_ui_control_vertical_content_alignment(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      err = js_create_int32(env, int32_t(control.VerticalContentAlignment()), &result);
+      assert(err == 0);
+    } else {
+      int32_t alignment;
+      if (!bare_win_ui__read_int32(env, argv[1], "alignment", &alignment)) return nullptr;
+
+      control.VerticalContentAlignment(VerticalAlignment(alignment));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_control_horizontal_content_alignment(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  Control control = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &control) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      err = js_create_int32(env, int32_t(control.HorizontalContentAlignment()), &result);
+      assert(err == 0);
+    } else {
+      int32_t alignment;
+      if (!bare_win_ui__read_int32(env, argv[1], "alignment", &alignment)) return nullptr;
+
+      control.HorizontalContentAlignment(HorizontalAlignment(alignment));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
 }

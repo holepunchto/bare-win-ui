@@ -89,6 +89,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("frameworkElementMinHeight", bare_win_ui_framework_element_min_height)
   V("frameworkElementActualWidth", bare_win_ui_framework_element_actual_width)
   V("frameworkElementActualHeight", bare_win_ui_framework_element_actual_height)
+  V("frameworkElementHorizontalAlignment", bare_win_ui_framework_element_horizontal_alignment)
+  V("frameworkElementVerticalAlignment", bare_win_ui_framework_element_vertical_alignment)
   V("frameworkElementParent", bare_win_ui_framework_element_parent)
 
   V("panelChildren", bare_win_ui_panel_children)
@@ -129,6 +131,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("controlBorderThickness", bare_win_ui_control_border_thickness)
   V("controlTemplateChild", bare_win_ui_control_template_child)
   V("controlPadding", bare_win_ui_control_padding)
+  V("controlHorizontalContentAlignment", bare_win_ui_control_horizontal_content_alignment)
+  V("controlVerticalContentAlignment", bare_win_ui_control_vertical_content_alignment)
   V("controlCornerRadius", bare_win_ui_control_corner_radius)
   V("focusManagerTryMoveFocus", bare_win_ui_focus_manager_try_move_focus)
 
@@ -307,6 +311,16 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_TRIMMING_CLIP", TextTrimming::Clip)
   V("TEXT_TRIMMING_WORD_ELLIPSIS", TextTrimming::WordEllipsis)
   V("TEXT_TRIMMING_CHARACTER_ELLIPSIS", TextTrimming::CharacterEllipsis)
+  V("HORIZONTAL_ALIGNMENT_LEFT", HorizontalAlignment::Left)
+  V("HORIZONTAL_ALIGNMENT_CENTER", HorizontalAlignment::Center)
+  V("HORIZONTAL_ALIGNMENT_RIGHT", HorizontalAlignment::Right)
+  V("HORIZONTAL_ALIGNMENT_STRETCH", HorizontalAlignment::Stretch)
+
+  V("VERTICAL_ALIGNMENT_TOP", VerticalAlignment::Top)
+  V("VERTICAL_ALIGNMENT_CENTER", VerticalAlignment::Center)
+  V("VERTICAL_ALIGNMENT_BOTTOM", VerticalAlignment::Bottom)
+  V("VERTICAL_ALIGNMENT_STRETCH", VerticalAlignment::Stretch)
+
   V("TEXT_ALIGNMENT_CENTER", TextAlignment::Center)
   V("TEXT_ALIGNMENT_LEFT", TextAlignment::Left)
   V("TEXT_ALIGNMENT_START", TextAlignment::Start)
