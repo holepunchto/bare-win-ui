@@ -280,6 +280,11 @@ bare_win_ui__from_float2(js_env_t *env, Numerics::float2 const &vector) {
 }
 
 static js_value_t *
+bare_win_ui__from_float3(js_env_t *env, Numerics::float3 const &vector) {
+  return bare_win_ui__from_fields(env, {{"x", vector.x}, {"y", vector.y}, {"z", vector.z}});
+}
+
+static js_value_t *
 bare_win_ui__from_color(js_env_t *env, winrt::Windows::UI::Color const &color) {
   return bare_win_ui__from_fields(env, {{"a", color.A}, {"r", color.R}, {"g", color.G}, {"b", color.B}});
 }

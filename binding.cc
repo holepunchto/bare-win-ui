@@ -12,8 +12,11 @@
 #include "lib/composition-shape.h"
 #include "lib/composition-shape-collection.h"
 #include "lib/composition-sprite-shape.h"
+#include "lib/composition-visual-surface.h"
 #include "lib/compositor.h"
+#include "lib/drop-shadow.h"
 #include "lib/element-composition-preview.h"
+#include "lib/sprite-visual.h"
 #include "lib/font-family.h"
 #include "lib/inline-collection.h"
 #include "lib/framework-element.h"
@@ -233,6 +236,10 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("compositorCreateRoundedRectangleGeometry", bare_win_ui_compositor_create_rounded_rectangle_geometry)
   V("compositorCreateColorBrush", bare_win_ui_compositor_create_color_brush)
   V("compositorCreateGeometricClip", bare_win_ui_compositor_create_geometric_clip)
+  V("compositorCreateSpriteVisual", bare_win_ui_compositor_create_sprite_visual)
+  V("compositorCreateDropShadow", bare_win_ui_compositor_create_drop_shadow)
+  V("compositorCreateVisualSurface", bare_win_ui_compositor_create_visual_surface)
+  V("compositorCreateSurfaceBrush", bare_win_ui_compositor_create_surface_brush)
 
   V("compositionObjectCompositor", bare_win_ui_composition_object_compositor)
 
@@ -262,6 +269,19 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("compositionRoundedRectangleGeometryOffset", bare_win_ui_composition_rounded_rectangle_geometry_offset)
 
   V("compositionColorBrushColor", bare_win_ui_composition_color_brush_color)
+
+  V("compositionVisualSurfaceSourceVisual", bare_win_ui_composition_visual_surface_source_visual)
+  V("compositionVisualSurfaceSourceSize", bare_win_ui_composition_visual_surface_source_size)
+  V("compositionVisualSurfaceSourceOffset", bare_win_ui_composition_visual_surface_source_offset)
+
+  V("spriteVisualBrush", bare_win_ui_sprite_visual_brush)
+  V("spriteVisualShadow", bare_win_ui_sprite_visual_shadow)
+
+  V("dropShadowColor", bare_win_ui_drop_shadow_color)
+  V("dropShadowOffset", bare_win_ui_drop_shadow_offset)
+  V("dropShadowBlurRadius", bare_win_ui_drop_shadow_blur_radius)
+  V("dropShadowOpacity", bare_win_ui_drop_shadow_opacity)
+  V("dropShadowMask", bare_win_ui_drop_shadow_mask)
 
   V("compositionGeometricClipGeometry", bare_win_ui_composition_geometric_clip_geometry)
 
