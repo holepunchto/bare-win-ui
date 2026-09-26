@@ -165,6 +165,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("textBlockFontFamily", bare_win_ui_text_block_font_family)
   V("textBlockForeground", bare_win_ui_text_block_foreground)
   V("textBlockTextAlignment", bare_win_ui_text_block_text_alignment)
+  V("textBlockMaxLines", bare_win_ui_text_block_max_lines)
+  V("textBlockTextTrimming", bare_win_ui_text_block_text_trimming)
   V("textBoxTextAlignment", bare_win_ui_text_box_text_alignment)
   V("textBlockTextWrapping", bare_win_ui_text_block_text_wrapping)
   V("textBlockInlines", bare_win_ui_text_block_inlines)
@@ -281,6 +283,10 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
     assert(err == 0); \
   }
 
+  V("TEXT_TRIMMING_NONE", TextTrimming::None)
+  V("TEXT_TRIMMING_CLIP", TextTrimming::Clip)
+  V("TEXT_TRIMMING_WORD_ELLIPSIS", TextTrimming::WordEllipsis)
+  V("TEXT_TRIMMING_CHARACTER_ELLIPSIS", TextTrimming::CharacterEllipsis)
   V("TEXT_ALIGNMENT_CENTER", TextAlignment::Center)
   V("TEXT_ALIGNMENT_LEFT", TextAlignment::Left)
   V("TEXT_ALIGNMENT_START", TextAlignment::Start)
