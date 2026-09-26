@@ -78,6 +78,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("packageManagerInit", bare_win_ui_package_manager_init)
   V("packageManagerAddPackage", bare_win_ui_package_manager_add_package)
 
+  V("uiElementIsHitTestVisible", bare_win_ui_ui_element_is_hit_test_visible)
   T("uiElementOpacity", bare_win_ui_ui_element_opacity, bare_win_ui_ui_element_opacity_typed, js_object, js_uint32, js_float64)
   V("uiElementMeasure", bare_win_ui_ui_element_measure)
   V("uiElementDesiredSize", bare_win_ui_ui_element_desired_size)

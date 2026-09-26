@@ -275,3 +275,39 @@ bare_win_ui_ui_element_desired_size(js_env_t *env, js_callback_info_t *info) {
 
   return result;
 }
+
+static js_value_t *
+bare_win_ui_ui_element_is_hit_test_visible(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  UIElement element = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &element) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      err = js_get_boolean(env, element.IsHitTestVisible(), &result);
+      assert(err == 0);
+    } else {
+      bool visible;
+      if (!bare_win_ui__read_bool(env, argv[1], "visible", &visible)) return nullptr;
+
+      element.IsHitTestVisible(visible);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
