@@ -102,6 +102,7 @@ install(TARGETS bare_runtime RUNTIME DESTINATION ${target})
 install(
   FILES
     $<TARGET_FILE:WebView2_Core>
+    $<TARGET_FILE:Win2D_Canvas>
     $<TARGET_FILE:WindowsAppSDK_Bootstrap>
   DESTINATION ${target}/bare
 )

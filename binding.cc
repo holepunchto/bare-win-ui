@@ -9,6 +9,9 @@
 #include "lib/composition-geometric-clip.h"
 #include "lib/composition-object.h"
 #include "lib/composition-rounded-rectangle-geometry.h"
+#include "lib/canvas-geometry.h"
+#include "lib/canvas-path-builder.h"
+#include "lib/composition-path.h"
 #include "lib/composition-shape.h"
 #include "lib/composition-shape-collection.h"
 #include "lib/composition-sprite-shape.h"
@@ -241,6 +244,19 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("compositorCreateRoundedRectangleGeometry", bare_win_ui_compositor_create_rounded_rectangle_geometry)
   V("compositorCreateColorBrush", bare_win_ui_compositor_create_color_brush)
   V("compositorCreateGeometricClip", bare_win_ui_compositor_create_geometric_clip)
+  V("compositorCreatePathGeometry", bare_win_ui_compositor_create_path_geometry)
+
+  V("canvasPathBuilderInit", bare_win_ui_canvas_path_builder_init)
+  V("canvasPathBuilderBeginFigure", bare_win_ui_canvas_path_builder_begin_figure)
+  V("canvasPathBuilderAddLine", bare_win_ui_canvas_path_builder_add_line)
+  V("canvasPathBuilderAddCubicBezier", bare_win_ui_canvas_path_builder_add_cubic_bezier)
+  V("canvasPathBuilderAddArc", bare_win_ui_canvas_path_builder_add_arc)
+  V("canvasPathBuilderEndFigure", bare_win_ui_canvas_path_builder_end_figure)
+
+  V("canvasGeometryCreatePath", bare_win_ui_canvas_geometry_create_path)
+
+  V("compositionPathInit", bare_win_ui_composition_path_init)
+  V("compositionPathGeometryPath", bare_win_ui_composition_path_geometry_path)
   V("compositorCreateSpriteVisual", bare_win_ui_compositor_create_sprite_visual)
   V("compositorCreateDropShadow", bare_win_ui_compositor_create_drop_shadow)
   V("compositorCreateVisualSurface", bare_win_ui_compositor_create_visual_surface)
@@ -267,6 +283,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("compositionSpriteShapeGeometry", bare_win_ui_composition_sprite_shape_geometry)
   V("compositionSpriteShapeFillBrush", bare_win_ui_composition_sprite_shape_fill_brush)
   V("compositionSpriteShapeStrokeBrush", bare_win_ui_composition_sprite_shape_stroke_brush)
+  V("compositionSpriteShapeStrokeDashArray", bare_win_ui_composition_sprite_shape_stroke_dash_array)
   V("compositionSpriteShapeStrokeThickness", bare_win_ui_composition_sprite_shape_stroke_thickness)
 
   T("compositionRoundedRectangleGeometrySize", bare_win_ui_composition_rounded_rectangle_geometry_size, bare_win_ui_composition_rounded_rectangle_geometry_size_typed, js_object, js_uint32, js_float64, js_float64)

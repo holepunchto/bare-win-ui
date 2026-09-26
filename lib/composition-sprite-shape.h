@@ -144,3 +144,46 @@ bare_win_ui_composition_sprite_shape_stroke_thickness(js_env_t *env, js_callback
 
   return result;
 }
+
+static js_value_t *
+bare_win_ui_composition_sprite_shape_stroke_dash_array(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  CompositionSpriteShape shape = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &shape) < 0) return nullptr;
+
+  try {
+    auto dashes = shape.StrokeDashArray();
+
+    dashes.Clear();
+
+    uint32_t len;
+    err = js_get_array_length(env, argv[1], &len);
+    assert(err == 0);
+
+    for (uint32_t i = 0; i < len; i++) {
+      js_value_t *element;
+      err = js_get_element(env, argv[1], i, &element);
+      assert(err == 0);
+
+      float value;
+      if (!bare_win_ui__read_float(env, element, "dash", &value)) return nullptr;
+
+      dashes.Append(value);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return nullptr;
+}

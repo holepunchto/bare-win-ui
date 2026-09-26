@@ -48,6 +48,8 @@
 #include <winrt/microsoft.ui.xaml.media.h>
 #include <winrt/microsoft.ui.xaml.media.imaging.h>
 #include <winrt/microsoft.ui.xaml.xamltypeinfo.h>
+#include <winrt/microsoft.graphics.canvas.geometry.h>
+#include <winrt/microsoft.graphics.canvas.h>
 #include <winrt/microsoft.web.webview2.core.h>
 
 using namespace winrt;
@@ -74,6 +76,9 @@ using namespace Microsoft::UI::Xaml::Markup;
 using namespace Microsoft::UI::Xaml::Media;
 using namespace Microsoft::UI::Xaml::Media::Imaging;
 using namespace Microsoft::UI::Xaml::XamlTypeInfo;
+
+using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::Geometry;
 
 using namespace Microsoft::Web::WebView2::Core;
 

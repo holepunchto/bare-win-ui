@@ -275,6 +275,44 @@ target_include_directories(
 )
 
 fetch_nuget_package(
+  Microsoft.Graphics.Win2D
+  1.3.2
+  Win2D
+  BUILD_COMMAND
+    "${CppWinRT_SOURCE_DIR}/bin/cppwinrt.exe"
+    -ref sdk
+    -ref "${WindowsAppSDK_InteractiveExperiences_SOURCE_DIR}/metadata/10.0.18362.0"
+    -ref "${WindowsAppSDK_Foundation_SOURCE_DIR}/metadata"
+    -ref "${WindowsAppSDK_WinUI_SOURCE_DIR}/metadata"
+    -in "<SOURCE_DIR>/lib/uap10.0"
+    -output "<BINARY_DIR>/include"
+)
+
+add_dependencies(${Win2D} CppWinRT ${WindowsAppSDK_InteractiveExperiences} ${WindowsAppSDK_Foundation} ${WindowsAppSDK_WinUI})
+
+add_library(Win2D INTERFACE)
+
+add_dependencies(Win2D ${Win2D})
+
+target_include_directories(
+  Win2D
+  INTERFACE
+    "${Win2D_SOURCE_DIR}/include"
+    "${Win2D_BINARY_DIR}/include"
+)
+
+add_library(Win2D_Canvas SHARED IMPORTED GLOBAL)
+
+add_dependencies(Win2D_Canvas Win2D)
+
+set_target_properties(
+  Win2D_Canvas
+  PROPERTIES
+  IMPORTED_LOCATION "${Win2D_SOURCE_DIR}/runtimes/win-${arch}/native/Microsoft.Graphics.Canvas.dll"
+)
+
+
+fetch_nuget_package(
   Microsoft.WindowsAppSDK
   1.8.251106002
   WindowsAppSDK
@@ -301,6 +339,7 @@ target_link_libraries(
   WindowsAppSDK
   INTERFACE
     WebView2
+    Win2D
     WindowsApp
     WindowsAppSDK_Base
     WindowsAppSDK_InteractiveExperiences
