@@ -1,5 +1,3 @@
-const WinUIObject = require('./lib/object')
-
 exports.DependencyObject = require('./lib/dependency-object')
 exports.UIElement = require('./lib/ui-element')
 exports.UIElementCollection = require('./lib/ui-element-collection')
@@ -45,7 +43,3 @@ exports.CompositionGeometricClip = require('./lib/composition-geometric-clip')
 exports.ElementCompositionPreview = require('./lib/element-composition-preview')
 
 exports.PackageManager = require('./lib/package-manager')
-
-require('./lib/handle').expose(
-  Object.values(exports).filter((Class) => Class.prototype instanceof WinUIObject)
-)

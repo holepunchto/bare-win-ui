@@ -153,3 +153,30 @@ bare_win_ui_canvas_set_top_typed(js_value_t *receiver, uint32_t bare_tag, double
   } catch (hresult_error const &) {
   }
 }
+
+static js_value_t *
+bare_win_ui_canvas_set_z_index(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  UIElement element = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "element", &element) < 0) return nullptr;
+
+  int32_t index;
+  if (!bare_win_ui__read_int32(env, argv[1], "index", &index)) return nullptr;
+
+  try {
+    Canvas::SetZIndex(element, index);
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+  }
+
+  return nullptr;
+}

@@ -100,6 +100,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("uiElementCollectionClear", bare_win_ui_ui_element_collection_clear)
 
   V("canvasInit", bare_win_ui_canvas_init)
+  V("canvasSetZIndex", bare_win_ui_canvas_set_z_index)
   V("canvasGetLeft", bare_win_ui_canvas_get_left)
   T("canvasSetLeft", bare_win_ui_canvas_set_left, bare_win_ui_canvas_set_left_typed, js_object, js_uint32, js_float64)
   V("canvasGetTop", bare_win_ui_canvas_get_top)
@@ -164,6 +165,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("textBlockFontFamily", bare_win_ui_text_block_font_family)
   V("textBlockForeground", bare_win_ui_text_block_foreground)
   V("textBlockTextAlignment", bare_win_ui_text_block_text_alignment)
+  V("textBoxTextAlignment", bare_win_ui_text_box_text_alignment)
   V("textBlockTextWrapping", bare_win_ui_text_block_text_wrapping)
   V("textBlockInlines", bare_win_ui_text_block_inlines)
 
@@ -234,6 +236,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   T("visualSize", bare_win_ui_visual_size, bare_win_ui_visual_size_typed, js_object, js_uint32, js_float64, js_float64)
   V("visualClip", bare_win_ui_visual_clip)
+  V("visualTransformMatrix", bare_win_ui_visual_transform_matrix)
 
   V("shapeVisualShapes", bare_win_ui_shape_visual_shapes)
 

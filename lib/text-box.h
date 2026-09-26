@@ -314,3 +314,38 @@ bare_win_ui_text_box_input_scope(js_env_t *env, js_callback_info_t *info) {
 
   return nullptr;
 }
+
+static js_value_t *
+bare_win_ui_text_box_text_alignment(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  TextBox text_box = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &text_box) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    if (argc == 1) {
+      result = bare_win_ui__from_int32(env, int32_t(text_box.TextAlignment()));
+    } else {
+      int32_t text_alignment;
+      if (!bare_win_ui__read_int32(env, argv[1], "text_alignment", &text_alignment)) return nullptr;
+
+      text_box.TextAlignment(TextAlignment(text_alignment));
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
