@@ -66,6 +66,7 @@ using namespace Windows::UI::Xaml::Interop;
 using namespace Microsoft::UI;
 using namespace Microsoft::UI::Composition;
 using namespace Microsoft::UI::Dispatching;
+using namespace Microsoft::UI::Input;
 using namespace Microsoft::UI::Windowing;
 using namespace Microsoft::UI::Xaml;
 using namespace Microsoft::UI::Xaml::Controls;

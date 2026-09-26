@@ -107,6 +107,23 @@ bare_win_ui_ui_element_events(js_env_t *env, js_callback_info_t *info) {
   return result;
 }
 
+// A listener answers with the event it was handed, and what it set on it is
+// read back off that rather than returned, as XAML writes `Handled` onto the
+// arguments it was given.
+static bool
+bare_win_ui_ui_element__asked(js_env_t *env, js_value_t *result, const char *name) {
+  int err;
+
+  js_value_t *value;
+  err = js_get_named_property(env, result, name, &value);
+  if (err < 0) return false;
+
+  bool asked;
+  if (js_get_value_bool(env, value, &asked) < 0) return false;
+
+  return asked;
+}
+
 static bool
 bare_win_ui_ui_element__emit(bare_win_ui_ui_element_events_t *events, const char *name, IInspectable const &sender, PointerRoutedEventArgs const &args) {
   int err;
@@ -127,11 +144,16 @@ bare_win_ui_ui_element__emit(bare_win_ui_ui_element_events_t *events, const char
     auto point = args.GetCurrentPoint(sender.as<UIElement>());
     auto position = point.Position();
 
-    js_value_t *argv[4] = {
+    js_value_t *in_contact;
+    err = js_get_boolean(env, point.IsInContact(), &in_contact);
+    assert(err == 0);
+
+    js_value_t *argv[5] = {
       bare_win_ui__from_double(env, position.X),
       bare_win_ui__from_double(env, position.Y),
       bare_win_ui__from_double(env, double(point.PointerId())),
       bare_win_ui__from_int32(env, int32_t(args.Pointer().PointerDeviceType())),
+      in_contact,
     };
 
     js_value_t *fn;
@@ -139,12 +161,21 @@ bare_win_ui_ui_element__emit(bare_win_ui_ui_element_events_t *events, const char
     assert(err == 0);
 
     js_value_t *result;
-    err = js_call_function(env, receiver, fn, 4, argv, &result);
+    err = js_call_function(env, receiver, fn, 5, argv, &result);
 
     if (err == 0) {
-      bool value;
+      handled = bare_win_ui_ui_element__asked(env, result, "handled");
 
-      if (js_get_value_bool(env, result, &value) == 0) handled = value;
+      // Every other toolkit here delivers the rest of a gesture to whatever
+      // the press landed on without being asked. XAML delivers it to whatever
+      // the pointer is over, and `CapturePointer` is what asks for the other
+      // behaviour, so a listener says here that it wants one.
+      if (bare_win_ui_ui_element__asked(env, result, "capturePointer")) {
+        try {
+          sender.as<UIElement>().CapturePointer(args.Pointer());
+        } catch (hresult_error const &) {
+        }
+      }
     }
   }
 
@@ -274,6 +305,72 @@ bare_win_ui_ui_element_desired_size(js_env_t *env, js_callback_info_t *info) {
   }
 
   return result;
+}
+
+static js_value_t *
+bare_win_ui_ui_element_protected_cursor(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1 || argc == 2);
+
+  UIElement element = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &element) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  // Declared protected, which WinRT does not enforce at the ABI: the interface
+  // it lives on is projected like any other and answers a query from outside
+  // the class, so a cursor needs no subclass to reach it.
+  try {
+    auto guarded = element.as<IUIElementProtected>();
+
+    if (argc == 1) {
+      result = bare_win_ui__from_object(env, guarded.ProtectedCursor());
+    } else {
+      InputCursor cursor = nullptr;
+      if (!bare_win_ui__read_nullable(env, argv[1], "cursor", &cursor)) return nullptr;
+
+      guarded.ProtectedCursor(cursor);
+    }
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_ui_element_release_pointer_captures(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  UIElement element = nullptr;
+  if (bare_winrt__read_type(env, argv[0], "handle", &element) < 0) return nullptr;
+
+  try {
+    element.ReleasePointerCaptures();
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return nullptr;
 }
 
 static js_value_t *

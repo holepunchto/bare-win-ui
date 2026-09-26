@@ -22,6 +22,7 @@
 #include "lib/sprite-visual.h"
 #include "lib/font-family.h"
 #include "lib/inline-collection.h"
+#include "lib/input-system-cursor.h"
 #include "lib/framework-element.h"
 #include "lib/headless.h"
 #include "lib/image.h"
@@ -82,6 +83,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("packageManagerAddPackage", bare_win_ui_package_manager_add_package)
 
   V("uiElementIsHitTestVisible", bare_win_ui_ui_element_is_hit_test_visible)
+  V("uiElementProtectedCursor", bare_win_ui_ui_element_protected_cursor)
+  V("uiElementReleasePointerCaptures", bare_win_ui_ui_element_release_pointer_captures)
   T("uiElementOpacity", bare_win_ui_ui_element_opacity, bare_win_ui_ui_element_opacity_typed, js_object, js_uint32, js_float64)
   V("uiElementMeasure", bare_win_ui_ui_element_measure)
   V("uiElementDesiredSize", bare_win_ui_ui_element_desired_size)
@@ -255,6 +258,9 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   V("canvasGeometryCreatePath", bare_win_ui_canvas_geometry_create_path)
 
+  V("inputSystemCursorCreate", bare_win_ui_input_system_cursor_create)
+  V("inputSystemCursorCursorShape", bare_win_ui_input_system_cursor_cursor_shape)
+
   V("compositionPathInit", bare_win_ui_composition_path_init)
   V("compositionPathGeometryPath", bare_win_ui_composition_path_geometry_path)
   V("compositorCreateSpriteVisual", bare_win_ui_compositor_create_sprite_visual)
@@ -329,6 +335,23 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("TEXT_TRIMMING_CLIP", TextTrimming::Clip)
   V("TEXT_TRIMMING_WORD_ELLIPSIS", TextTrimming::WordEllipsis)
   V("TEXT_TRIMMING_CHARACTER_ELLIPSIS", TextTrimming::CharacterEllipsis)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_ARROW", InputSystemCursorShape::Arrow)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_CROSS", InputSystemCursorShape::Cross)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_HAND", InputSystemCursorShape::Hand)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_HELP", InputSystemCursorShape::Help)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_IBEAM", InputSystemCursorShape::IBeam)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_SIZE_ALL", InputSystemCursorShape::SizeAll)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_SIZE_NORTHEAST_SOUTHWEST", InputSystemCursorShape::SizeNortheastSouthwest)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_SIZE_NORTH_SOUTH", InputSystemCursorShape::SizeNorthSouth)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_SIZE_NORTHWEST_SOUTHEAST", InputSystemCursorShape::SizeNorthwestSoutheast)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_SIZE_WEST_EAST", InputSystemCursorShape::SizeWestEast)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_UNIVERSAL_NO", InputSystemCursorShape::UniversalNo)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_UP_ARROW", InputSystemCursorShape::UpArrow)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_WAIT", InputSystemCursorShape::Wait)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_PIN", InputSystemCursorShape::Pin)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_PERSON", InputSystemCursorShape::Person)
+  V("INPUT_SYSTEM_CURSOR_SHAPE_APP_STARTING", InputSystemCursorShape::AppStarting)
+
   V("HORIZONTAL_ALIGNMENT_LEFT", HorizontalAlignment::Left)
   V("HORIZONTAL_ALIGNMENT_CENTER", HorizontalAlignment::Center)
   V("HORIZONTAL_ALIGNMENT_RIGHT", HorizontalAlignment::Right)
