@@ -25,7 +25,6 @@
 #include "lib/input-system-cursor.h"
 #include "lib/framework-element.h"
 #include "lib/general-transform.h"
-#include "lib/headless.h"
 #include "lib/image.h"
 #include "lib/bitmap-image.h"
 #include "lib/package-manager.h"
@@ -60,9 +59,6 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   int err;
 
   bare_win_ui_state_t *state = bare_win_ui_state_create(env, exports);
-
-  err = bare_win_ui__headless_init(env, state);
-  if (err < 0) return nullptr;
 
 #define T(name, fn, typed, ...) \
   { \

@@ -4,11 +4,9 @@
 #include <js.h>
 
 #include "bridging.h"
-#include "headless.h"
 
 // A view reads its text asynchronously, so the caller passes a callback.
 struct bare_win_ui_data_package_view_read_t {
-  bare_win_ui_state_t *state;
   js_env_t *env;
   js_ref_t *callback;
 };
@@ -56,8 +54,6 @@ bare_win_ui_data_package_view__on_read(bare_win_ui_data_package_view_read_t *rea
   assert(err == 0);
 
   delete read;
-
-  bare_win_ui__headless_release(read->state);
 }
 
 static js_value_t *
@@ -116,14 +112,10 @@ bare_win_ui_data_package_view_get_text_async(js_env_t *env, js_callback_info_t *
 
   auto read = new bare_win_ui_data_package_view_read_t();
 
-  read->state = state;
-
   read->env = env;
 
   err = js_create_reference(env, argv[1], 1, &read->callback);
   assert(err == 0);
-
-  bare_win_ui__headless_hold(state);
 
   try {
     // The completion runs on a thread pool thread and the engine runs on the
@@ -140,14 +132,10 @@ bare_win_ui_data_package_view_get_text_async(js_env_t *env, js_callback_info_t *
       });
     });
   } catch (hresult_error const &error) {
-    bare_win_ui__headless_release(read->state);
-
     bare_win_ui__throw(env, error);
 
     return nullptr;
   } catch (...) {
-    bare_win_ui__headless_release(state);
-
     bare_win_ui__throw(env, hresult_error(E_FAIL, L"The text could not be read"));
 
     return nullptr;

@@ -4,7 +4,6 @@
 #include <js.h>
 
 #include "bridging.h"
-#include "headless.h"
 
 // A dialog answers through an `IAsyncOperation`, so the caller passes a
 // callback and the answer is sent back to the thread the engine runs on.
@@ -20,7 +19,6 @@ enum {
 };
 
 struct bare_win_ui_content_dialog_show_t {
-  bare_win_ui_state_t *state;
   js_env_t *env;
   js_ref_t *callback;
 };
@@ -57,8 +55,6 @@ bare_win_ui_content_dialog__on_show(bare_win_ui_content_dialog_show_t *show, int
   assert(err == 0);
 
   delete show;
-
-  bare_win_ui__headless_release(show->state);
 }
 
 static js_value_t *
@@ -270,14 +266,10 @@ bare_win_ui_content_dialog_show_async(js_env_t *env, js_callback_info_t *info) {
 
   auto show = new bare_win_ui_content_dialog_show_t();
 
-  show->state = state;
-
   show->env = env;
 
   err = js_create_reference(env, argv[1], 1, &show->callback);
   assert(err == 0);
-
-  bare_win_ui__headless_hold(state);
 
   try {
     auto dispatcher = DispatcherQueue::GetForCurrentThread();
@@ -290,8 +282,6 @@ bare_win_ui_content_dialog_show_async(js_env_t *env, js_callback_info_t *info) {
       });
     });
   } catch (hresult_error const &error) {
-    bare_win_ui__headless_release(show->state);
-
     bare_win_ui__throw(env, error);
 
     return nullptr;

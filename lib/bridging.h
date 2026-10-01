@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <js.h>
 #include <string>
-#include <uv.h>
 #include <utf.h>
 
 #include "windows-app-sdk.h"
@@ -18,13 +17,6 @@ struct bare_win_ui_state_t {
 
   // Text is measured with the control that draws it, so the two agree.
   TextBlock text_block = nullptr;
-
-  // The message pump that keeps XAML running under a headless runtime, and how
-  // many things are waiting on it. The dispatcher and the XAML manager are one
-  // per thread, but this is one per instantiation, because the timer runs on
-  // the loop of the environment.
-  uv_timer_t *pump = nullptr;
-  uint32_t holds = 0;
 };
 
 static void

@@ -4,10 +4,8 @@
 #include <js.h>
 
 #include "bridging.h"
-#include "headless.h"
 
 struct bare_win_ui_web_view2_ready_t {
-  bare_win_ui_state_t *state;
   js_env_t *env;
   js_ref_t *ctx;
   js_ref_t *on_ready;
@@ -55,8 +53,6 @@ bare_win_ui_web_view2__on_ready(bare_win_ui_web_view2_ready_t *ready, hresult er
   assert(err == 0);
 
   delete ready;
-
-  bare_win_ui__headless_release(ready->state);
 }
 
 static js_value_t *
@@ -84,8 +80,6 @@ bare_win_ui_web_view2_init(js_env_t *env, js_callback_info_t *info) {
 
     auto ready = new bare_win_ui_web_view2_ready_t();
 
-    ready->state = state;
-
     ready->env = env;
 
     err = js_create_reference(env, argv[0], 0, &ready->ctx);
@@ -95,8 +89,6 @@ bare_win_ui_web_view2_init(js_env_t *env, js_callback_info_t *info) {
     assert(err == 0);
 
     auto dispatcher = DispatcherQueue::GetForCurrentThread();
-
-    bare_win_ui__headless_hold(state);
 
     web_view.EnsureCoreWebView2Async().Completed([=](auto const &operation, auto const &) {
       auto error = operation.ErrorCode();
