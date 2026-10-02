@@ -172,11 +172,38 @@ bare__launch() {
   });
 }
 
-struct BareApp : public ApplicationT<BareApp> {
+// A control builds its template from binary markup, which goes through the
+// app's metadata provider. An app written in XAML gets one generated, and this
+// one provides the WinUI types, which are the only ones its markup can name.
+struct BareApp : public ApplicationT<BareApp, IXamlMetadataProvider> {
+  IXamlType
+  GetXamlType(TypeName const &type) {
+    return provider.GetXamlType(type);
+  }
+
+  IXamlType
+  GetXamlType(hstring const &name) {
+    return provider.GetXamlType(name);
+  }
+
+  com_array<XmlnsDefinition>
+  GetXmlnsDefinitions() {
+    return provider.GetXmlnsDefinitions();
+  }
+
   void
   OnLaunched(LaunchActivatedEventArgs const &) {
+    // The theme dictionaries every control style reads its brushes from, which
+    // a XAML app gets from `<XamlControlsResources />` in its `App.xaml`.
+    // Without them a `{ThemeResource}` in a style fails. Merging them loads
+    // XAML too, so it has to come after the metadata provider above.
+    Resources().MergedDictionaries().Append(XamlControlsResources());
+
     bare__launch();
   }
+
+private:
+  XamlControlsXamlMetaDataProvider provider;
 };
 
 int
