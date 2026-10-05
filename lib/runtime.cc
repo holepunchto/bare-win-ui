@@ -206,6 +206,15 @@ private:
   XamlControlsXamlMetaDataProvider provider;
 };
 
+// A GUI app has no standard streams unless whatever started it passed some, as
+// a test runner does, so only the missing ones are pointed at nothing.
+static void
+bare__reopen_if_missing(DWORD id, FILE *file, const char *mode) {
+  HANDLE handle = GetStdHandle(id);
+
+  if (handle == nullptr || handle == INVALID_HANDLE_VALUE) freopen("NUL", mode, file);
+}
+
 int
 main(int argc, char *argv[]) {
   int err;
@@ -213,9 +222,9 @@ main(int argc, char *argv[]) {
   err = rlimit_set(rlimit_open_files, rlimit_infer);
   assert(err == 0);
 
-  freopen("NUL", "r", stdin);
-  freopen("NUL", "w", stdout);
-  freopen("NUL", "w", stderr);
+  bare__reopen_if_missing(STD_INPUT_HANDLE, stdin, "r");
+  bare__reopen_if_missing(STD_OUTPUT_HANDLE, stdout, "w");
+  bare__reopen_if_missing(STD_ERROR_HANDLE, stderr, "w");
 
   uv_disable_stdio_inheritance();
 
