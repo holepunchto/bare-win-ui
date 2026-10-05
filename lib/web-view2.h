@@ -234,6 +234,40 @@ bare_win_ui_web_view2_navigate_to_string(js_env_t *env, js_callback_info_t *info
 }
 
 static js_value_t *
+bare_win_ui_web_view2_settings(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  WebView2 web_view = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &web_view) < 0) return nullptr;
+
+  js_value_t *result = nullptr;
+
+  try {
+    auto core = web_view.CoreWebView2();
+
+    result = bare_win_ui__from_object(env, state, core == nullptr ? nullptr : core.Settings());
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
 bare_win_ui_web_view2_open_dev_tools_window(js_env_t *env, js_callback_info_t *info) {
   int err;
 
