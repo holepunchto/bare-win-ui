@@ -42,6 +42,7 @@
 #include "lib/ui-element.h"
 #include "lib/ui-element-collection.h"
 #include "lib/visual.h"
+#include "lib/core-web-view2-settings.h"
 #include "lib/web-view2.h"
 #include "lib/scroll-viewer.h"
 #include "lib/window.h"
@@ -314,6 +315,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("webView2Source", bare_win_ui_web_view2_source)
   V("webView2Navigate", bare_win_ui_web_view2_navigate)
   V("webView2NavigateToString", bare_win_ui_web_view2_navigate_to_string)
+  V("webView2Settings", bare_win_ui_web_view2_settings)
+  V("coreWebView2SettingsAreDevToolsEnabled", bare_win_ui_core_web_view2_settings_are_dev_tools_enabled)
   V("webView2OpenDevToolsWindow", bare_win_ui_web_view2_open_dev_tools_window)
 
   V("compositorCreateShapeVisual", bare_win_ui_compositor_create_shape_visual)
