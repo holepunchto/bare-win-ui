@@ -46,6 +46,8 @@
 #include "lib/scroll-viewer.h"
 #include "lib/window.h"
 #include "lib/app-window.h"
+#include "lib/application.h"
+#include "lib/composition-target.h"
 #include "lib/clipboard.h"
 #include "lib/data-package.h"
 #include "lib/data-package-view.h"
@@ -262,6 +264,12 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   V("dataPackageViewContains", bare_win_ui_data_package_view_contains)
   V("dataPackageViewGetTextAsync", bare_win_ui_data_package_view_get_text_async)
+
+  V("compositionTargetEvents", bare_win_ui_composition_target_events)
+  V("compositionTargetEventMask", bare_win_ui_composition_target_event_mask)
+
+  V("applicationCurrent", bare_win_ui_application_current)
+  V("applicationDispatcherShutdownMode", bare_win_ui_application_dispatcher_shutdown_mode)
 
   V("uiSettingsInit", bare_win_ui_ui_settings_init)
   V("uiSettingsTextScaleFactor", bare_win_ui_ui_settings_text_scale_factor)
@@ -529,6 +537,11 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("STRETCH_UNIFORM_TO_FILL", Stretch::UniformToFill)
 
   V("SCROLL_VIEWER_EVENT_VIEW_CHANGED", bare_win_ui_scroll_viewer_event_view_changed)
+
+  V("COMPOSITION_TARGET_EVENT_RENDERING", bare_win_ui_composition_target_event_rendering)
+
+  V("APPLICATION_DISPATCHER_SHUTDOWN_MODE_ON_LAST_WINDOW_CLOSE", DispatcherShutdownMode::OnLastWindowClose)
+  V("APPLICATION_DISPATCHER_SHUTDOWN_MODE_ON_EXPLICIT_SHUTDOWN", DispatcherShutdownMode::OnExplicitShutdown)
 
   V("SCROLL_VIEWER_SCROLL_MODE_DISABLED", ScrollMode::Disabled)
   V("SCROLL_VIEWER_SCROLL_MODE_ENABLED", ScrollMode::Enabled)
