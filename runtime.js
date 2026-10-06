@@ -18,7 +18,8 @@ prebuilds['win32-x64'] = () => {
       require.asset(
         './prebuilds/win32-x64/bare/Microsoft.WindowsAppRuntime.Bootstrap.dll',
         __filename
-      )
+      ),
+      require.asset('./prebuilds/win32-x64/bare/resources.pri', __filename)
     ]
   }
 }
@@ -33,7 +34,8 @@ prebuilds['win32-arm64'] = () => {
       require.asset(
         './prebuilds/win32-arm64/bare/Microsoft.WindowsAppRuntime.Bootstrap.dll',
         __filename
-      )
+      ),
+      require.asset('./prebuilds/win32-arm64/bare/resources.pri', __filename)
     ]
   }
 }
