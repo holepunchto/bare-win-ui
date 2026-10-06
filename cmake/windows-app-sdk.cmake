@@ -274,6 +274,36 @@ target_include_directories(
     "${WindowsAppSDK_WinUI_BINARY_DIR}/include"
 )
 
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "ARM64|arm64|aarch64")
+  set(host_arch "arm64")
+else()
+  set(host_arch "x64")
+endif()
+
+# An app that runs without a package identity only finds the XAML control
+# resources in a `resources.pri` next to its executable.
+fetch_nuget_package(
+  Microsoft.Windows.SDK.BuildTools
+  10.0.26100.4654
+  WindowsSDK_BuildTools
+  BUILD_COMMAND
+    "<SOURCE_DIR>/bin/10.0.26100.0/${host_arch}/makepri.exe"
+    new
+    /pr "${WindowsAppSDK_WinUI_SOURCE_DIR}/runtimes-framework/win-${arch}/native"
+    /cf "${CMAKE_CURRENT_LIST_DIR}/resources.priconfig.xml"
+    /of "<BINARY_DIR>/resources.pri"
+    /in bare
+    /o
+)
+
+add_dependencies(${WindowsSDK_BuildTools} ${WindowsAppSDK_WinUI})
+
+add_custom_target(WindowsAppSDK_Resources)
+
+add_dependencies(WindowsAppSDK_Resources ${WindowsSDK_BuildTools})
+
+set(WindowsAppSDK_Resources_FILE "${WindowsSDK_BuildTools_BINARY_DIR}/resources.pri")
+
 fetch_nuget_package(
   Microsoft.Graphics.Win2D
   1.3.2

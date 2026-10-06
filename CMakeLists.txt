@@ -72,6 +72,8 @@ target_link_libraries(
     WindowsAppSDK
 )
 
+add_dependencies(bare_runtime WindowsAppSDK_Resources)
+
 target_link_options(
   bare_runtime
   PRIVATE
@@ -104,5 +106,6 @@ install(
     $<TARGET_FILE:WebView2_Core>
     $<TARGET_FILE:Win2D_Canvas>
     $<TARGET_FILE:WindowsAppSDK_Bootstrap>
+    ${WindowsAppSDK_Resources_FILE}
   DESTINATION ${target}/bare
 )
