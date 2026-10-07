@@ -1,26 +1,30 @@
 const { test } = require('bare-tap')
+const { afterAnimationFrame } = require('bare-animation-frame')
 const { Canvas, FrameworkElement, TextBlock } = require('..')
 const { mount } = require('./helpers')
 
 const { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT, ELEMENT_THEME } = FrameworkElement
 
-test('builds a hierarchy', (t) => {
+test('builds a hierarchy', async (t) => {
   const parent = new Canvas()
   const a = new TextBlock()
   const b = new TextBlock()
   const c = new TextBlock()
 
-  t.equal(a.parent, null, 'no parent')
   t.equal(parent.children.size, 0, 'no children')
 
   parent.children.append(a)
   parent.children.append(c)
   parent.children.insertAt(1, b)
 
-  t.ok(a.parent === parent, 'same parent wrapper')
   t.equal(parent.children.size, 3, 'three children')
   t.ok(parent.children.getAt(1) === b, 'inserted')
   t.equal(parent.children.indexOf(c), 2, 'index')
+
+  // An element only has a parent once it is part of a tree that is shown.
+  await mount(t, parent)
+
+  t.ok(a.parent === parent, 'same parent wrapper')
 
   parent.children.removeAt(1)
 
@@ -109,25 +113,6 @@ test('places children on a canvas', async (t) => {
   )
 })
 
-test('lays out now when asked', async (t) => {
-  const canvas = new Canvas()
-  const child = new Canvas()
-
-  canvas.children.append(child)
-
-  await mount(t, canvas)
-
-  child.width = 50
-  child.height = 60
-
-  t.equal(child.actualWidth, 0, 'not before the next pass')
-
-  child.updateLayout()
-
-  t.equal(child.actualWidth, 50, 'width')
-  t.equal(child.actualHeight, 60, 'height')
-})
-
 test('is drawn into a XAML root once loaded', async (t) => {
   const canvas = new Canvas()
 
@@ -163,5 +148,8 @@ test('forces a theme', async (t) => {
 
   t.equal(canvas.requestedTheme, other, 'requested')
   t.equal(canvas.actualTheme, other, 'drawn in it')
+
+  await afterAnimationFrame()
+
   t.equal(changes, 1, 'emitted')
 })

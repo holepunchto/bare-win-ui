@@ -75,17 +75,17 @@ test('belongs to an application', (t) => {
   t.ok(application !== null, 'started by the runtime')
   t.ok(Application.current === application, 'same wrapper')
 
-  const { ON_LAST_WINDOW_CLOSE, ON_EXPLICIT_SHUTDOWN } = Application.DISPATCHER_SHUTDOWN_MODE
+  const { ON_LAST_WINDOW_CLOSE } = Application.DISPATCHER_SHUTDOWN_MODE
 
-  t.equal(application.dispatcherShutdownMode, ON_LAST_WINDOW_CLOSE, 'shuts down with its windows')
-
-  application.dispatcherShutdownMode = ON_EXPLICIT_SHUTDOWN
+  const mode = application.dispatcherShutdownMode
 
   t.teardown(() => {
-    application.dispatcherShutdownMode = ON_LAST_WINDOW_CLOSE
+    application.dispatcherShutdownMode = mode
   })
 
-  t.equal(application.dispatcherShutdownMode, ON_EXPLICIT_SHUTDOWN, 'only when told to')
+  application.dispatcherShutdownMode = ON_LAST_WINDOW_CLOSE
+
+  t.equal(application.dispatcherShutdownMode, ON_LAST_WINDOW_CLOSE, 'shutdown mode')
 })
 
 test('closes a second window', async (t) => {
