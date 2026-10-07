@@ -1,4 +1,5 @@
 # https://github.com/holepunchto/lunte/issues/17
+lib/bitmap-image.d.ts
 lib/composition-target.d.ts
 lib/framework-element.d.ts
 lib/image.d.ts
