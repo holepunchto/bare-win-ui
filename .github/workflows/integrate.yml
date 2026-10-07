@@ -36,4 +36,5 @@ jobs:
           platform: ${{ matrix.platform }}
           arch: ${{ matrix.arch }}
           flags: --debug
+      - uses: holepunchto/actions/setup-windows-app-runtime@v1
       - run: npm test
