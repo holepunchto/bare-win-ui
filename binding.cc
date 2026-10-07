@@ -113,6 +113,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("uiElementReleasePointerCaptures", bare_win_ui_ui_element_release_pointer_captures)
   T("uiElementOpacity", bare_win_ui_ui_element_opacity, bare_win_ui_ui_element_opacity_typed, js_object, js_uint32, js_float64)
   V("uiElementMeasure", bare_win_ui_ui_element_measure)
+  V("uiElementUpdateLayout", bare_win_ui_ui_element_update_layout)
   V("uiElementDesiredSize", bare_win_ui_ui_element_desired_size)
 
   T("frameworkElementWidth", bare_win_ui_framework_element_width, bare_win_ui_framework_element_width_typed, js_object, js_uint32, js_float64)
