@@ -53,6 +53,22 @@ test('reports an image that cannot be read', async (t) => {
   t.equal(typeof errorMessage, 'string', 'with a message')
 })
 
+test('a bitmap reports its own decode', async (t) => {
+  const image = new Image()
+  const source = new BitmapImage()
+
+  const failed = new Promise((resolve) => source.once('imageFailed', resolve))
+
+  image.source = source
+  source.uriSource = 'file:///C:/no/such/file.png'
+
+  await mount(t, image)
+
+  const { errorMessage } = await failed
+
+  t.equal(typeof errorMessage, 'string', 'with a message')
+})
+
 test('reads the text scale', (t) => {
   t.ok(new UISettings().textScaleFactor >= 1)
 })

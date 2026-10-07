@@ -1,13 +1,12 @@
 import WinUIImageSource = require('./image-source')
 
 /** A bitmap, as a `BitmapSource`. */
-interface WinUIBitmapSource extends WinUIImageSource {
+interface WinUIBitmapSource<M extends Record<keyof M, unknown[]> = {}> extends WinUIImageSource<M> {
   readonly pixelWidth: number
-
   readonly pixelHeight: number
 }
 
-declare class WinUIBitmapSource {
+declare class WinUIBitmapSource<M extends Record<keyof M, unknown[]> = {}> {
   protected constructor()
 }
 
