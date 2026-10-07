@@ -30,6 +30,9 @@ interface WinUIUIElement<
   /** Ask how big the element wants to be within `size`. Read the answer from `desiredSize`. */
   measure(size: { width: number; height: number }): this
 
+  /** Lay out the element and its descendants now, rather than on the next layout pass. */
+  updateLayout(): this
+
   readonly desiredSize: { width: number; height: number }
 }
 
