@@ -155,6 +155,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   V("bitmapImageInit", bare_win_ui_bitmap_image_init)
   V("bitmapImageUriSource", bare_win_ui_bitmap_image_uri_source)
+  V("bitmapImageEvents", bare_win_ui_bitmap_image_events)
+  V("bitmapImageEventMask", bare_win_ui_bitmap_image_event_mask)
   V("bitmapSourcePixelWidth", bare_win_ui_bitmap_source_pixel_width)
   V("bitmapSourcePixelHeight", bare_win_ui_bitmap_source_pixel_height)
 
@@ -534,6 +536,9 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   V("IMAGE_EVENT_IMAGE_OPENED", bare_win_ui_image_event_image_opened)
   V("IMAGE_EVENT_IMAGE_FAILED", bare_win_ui_image_event_image_failed)
+
+  V("BITMAP_IMAGE_EVENT_IMAGE_OPENED", bare_win_ui_bitmap_image_event_image_opened)
+  V("BITMAP_IMAGE_EVENT_IMAGE_FAILED", bare_win_ui_bitmap_image_event_image_failed)
 
   V("STRETCH_NONE", Stretch::None)
   V("STRETCH_FILL", Stretch::Fill)

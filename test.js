@@ -1,0 +1,6 @@
+require('./test/element')
+require('./test/window')
+require('./test/text')
+require('./test/controls')
+require('./test/scroll-viewer')
+require('./test/values')
