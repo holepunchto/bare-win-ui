@@ -281,6 +281,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("xamlRootSize", bare_win_ui_xaml_root_size)
   V("xamlRootRasterizationScale", bare_win_ui_xaml_root_rasterization_scale)
   V("xamlRootIsHostVisible", bare_win_ui_xaml_root_is_host_visible)
+  V("xamlRootEvents", bare_win_ui_xaml_root_events)
+  V("xamlRootEventMask", bare_win_ui_xaml_root_event_mask)
 
   V("windowInit", bare_win_ui_window_init)
   V("windowTitle", bare_win_ui_window_title)
@@ -539,6 +541,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   V("BITMAP_IMAGE_EVENT_IMAGE_OPENED", bare_win_ui_bitmap_image_event_image_opened)
   V("BITMAP_IMAGE_EVENT_IMAGE_FAILED", bare_win_ui_bitmap_image_event_image_failed)
+  V("XAML_ROOT_EVENT_CHANGED", bare_win_ui_xaml_root_event_changed)
 
   V("STRETCH_NONE", Stretch::None)
   V("STRETCH_FILL", Stretch::Fill)
