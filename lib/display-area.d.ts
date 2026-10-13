@@ -16,7 +16,7 @@ declare class WinUIDisplayArea {
   static readonly primary: WinUIDisplayArea | null
 
   /** The display a window is on. `fallback` is a `FALLBACK` constant and defaults to `NEAREST`. */
-  static getFromWindowId(id: number, fallback?: number): WinUIDisplayArea | null
+  static getFromWindowId(id: bigint, fallback?: number): WinUIDisplayArea | null
 
   static readonly FALLBACK: {
     readonly NONE: number

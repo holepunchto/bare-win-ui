@@ -22,6 +22,7 @@ import Brush = require('./lib/brush')
 import SolidColorBrush = require('./lib/solid-color-brush')
 import WebView2 = require('./lib/web-view2')
 import Window = require('./lib/window')
+import * as Win32Interop from './lib/win32-interop'
 import * as constants from './lib/constants'
 import Compositor = require('./lib/compositor')
 import CompositionObject = require('./lib/composition-object')
@@ -75,6 +76,7 @@ export {
   SolidColorBrush,
   WebView2,
   Window,
+  Win32Interop,
   constants,
   Compositor,
   CompositionObject,
