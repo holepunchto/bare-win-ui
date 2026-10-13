@@ -47,6 +47,7 @@
 #include "lib/scroll-viewer.h"
 #include "lib/window.h"
 #include "lib/app-window.h"
+#include "lib/content-island-environment.h"
 #include "lib/application.h"
 #include "lib/composition-target.h"
 #include "lib/clipboard.h"
@@ -284,6 +285,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("xamlRootSize", bare_win_ui_xaml_root_size)
   V("xamlRootRasterizationScale", bare_win_ui_xaml_root_rasterization_scale)
   V("xamlRootIsHostVisible", bare_win_ui_xaml_root_is_host_visible)
+  V("xamlRootContentIslandEnvironment", bare_win_ui_xaml_root_content_island_environment)
+  V("contentIslandEnvironmentAppWindowId", bare_win_ui_content_island_environment_app_window_id)
   V("xamlRootEvents", bare_win_ui_xaml_root_events)
   V("xamlRootEventMask", bare_win_ui_xaml_root_event_mask)
 

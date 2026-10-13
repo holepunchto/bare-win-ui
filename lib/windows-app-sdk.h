@@ -36,6 +36,7 @@
 // https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/
 
 #include <winrt/microsoft.ui.composition.h>
+#include <winrt/microsoft.ui.content.h>
 #include <winrt/microsoft.ui.dispatching.h>
 #include <winrt/microsoft.ui.input.h>
 #include <winrt/microsoft.ui.interop.h>

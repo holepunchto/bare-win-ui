@@ -465,7 +465,7 @@ bare_win_ui_ui_element_transform_to_visual(js_env_t *env, js_callback_info_t *in
   if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &element) < 0) return nullptr;
 
   UIElement target = nullptr;
-  if (bare_winrt_read_type(env, state->registry, argv[1], "target", &target) < 0) return nullptr;
+  if (!bare_win_ui__read_nullable(env, state, argv[1], "target", &target)) return nullptr;
 
   js_value_t *result;
 
