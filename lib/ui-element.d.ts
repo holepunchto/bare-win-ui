@@ -8,8 +8,8 @@ import WinUIXamlRoot = require('./xaml-root')
 interface WinUIUIElement<
   M extends Record<keyof M, unknown[]> = WinUIUIElement.Events
 > extends WinUIDependencyObject<M> {
-  /** The transform from this element to the coordinates of `target`. */
-  transformToVisual(target: WinUIUIElement<any>): WinUIGeneralTransform
+  /** The transform from this element to the coordinates of `target`, or of the XAML root if `target` is `null`. */
+  transformToVisual(target: WinUIUIElement<any> | null): WinUIGeneralTransform
 
   /** What the element is drawn into, or `null` before it is loaded. */
   readonly xamlRoot: WinUIXamlRoot | null

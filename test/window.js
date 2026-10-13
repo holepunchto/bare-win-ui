@@ -70,6 +70,15 @@ test('has a native window', async (t) => {
   t.equal(Win32Interop.getWindowIdFromWindow(hwnd), id, 'the same window')
 })
 
+test('hosts its content in its window', async (t) => {
+  const window = await mount(t, new Canvas())
+
+  const environment = window.content.xamlRoot.contentIslandEnvironment
+
+  t.ok(environment !== null, 'an environment')
+  t.equal(environment.appWindowId, window.appWindow.id, 'the window')
+})
+
 test('is on a display', async (t) => {
   const window = await mount(t, new Canvas())
 

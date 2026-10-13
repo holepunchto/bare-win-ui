@@ -105,6 +105,11 @@ test('places children on a canvas', async (t) => {
   const transform = child.transformToVisual(canvas)
 
   t.deepStrictEqual(transform.transformPoint(5, 5), { x: 15, y: 25 }, 'to the canvas')
+  t.deepStrictEqual(
+    child.transformToVisual(null).transformPoint(5, 5),
+    { x: 15, y: 25 },
+    'to the root the canvas fills'
+  )
   t.deepStrictEqual(transform.inverse.transformPoint(15, 25), { x: 5, y: 5 }, 'and back')
   t.deepStrictEqual(
     transform.transformBounds(0, 0, 30, 40),

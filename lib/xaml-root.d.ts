@@ -1,4 +1,5 @@
 import WinUIObject = require('./object')
+import WinUIContentIslandEnvironment = require('./content-island-environment')
 
 /** What elements are drawn into, as a `XamlRoot`. */
 interface WinUIXamlRoot extends WinUIObject<WinUIXamlRoot.Events> {
@@ -8,6 +9,9 @@ interface WinUIXamlRoot extends WinUIObject<WinUIXamlRoot.Events> {
   readonly rasterizationScale: number
 
   readonly isHostVisible: boolean
+
+  /** What the content is hosted in, including the window it is in. */
+  readonly contentIslandEnvironment: WinUIContentIslandEnvironment | null
 }
 
 declare class WinUIXamlRoot {
