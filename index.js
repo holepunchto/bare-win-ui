@@ -22,6 +22,7 @@ exports.Brush = require('./lib/brush')
 exports.SolidColorBrush = require('./lib/solid-color-brush')
 exports.WebView2 = require('./lib/web-view2')
 exports.Window = require('./lib/window')
+exports.Win32Interop = require('./lib/win32-interop')
 
 exports.constants = require('./lib/constants')
 

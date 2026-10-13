@@ -1,5 +1,5 @@
 const { test } = require('bare-tap')
-const { Canvas, Window } = require('..')
+const { Canvas, Win32Interop, Window } = require('..')
 const Application = require('../lib/application')
 const DisplayArea = require('../lib/display-area')
 const { mount } = require('./helpers')
@@ -55,8 +55,19 @@ test('is seen by the system in physical pixels', async (t) => {
   const scale = window.content.xamlRoot.rasterizationScale
 
   t.ok(window.appWindow === appWindow, 'same wrapper')
-  t.ok(appWindow.id !== 0, 'an id')
+  t.ok(appWindow.id !== 0n, 'an id')
   t.ok(appWindow.size.width >= window.bounds.width * scale, 'at least the client area')
+})
+
+test('has a native window', async (t) => {
+  const window = await mount(t, new Canvas())
+
+  const { id } = window.appWindow
+
+  const hwnd = Win32Interop.getWindowFromWindowId(id)
+
+  t.ok(hwnd !== 0n, 'a window handle')
+  t.equal(Win32Interop.getWindowIdFromWindow(hwnd), id, 'the same window')
 })
 
 test('is on a display', async (t) => {

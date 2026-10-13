@@ -54,6 +54,7 @@
 #include "lib/data-package-view.h"
 #include "lib/content-dialog.h"
 #include "lib/display-area.h"
+#include "lib/win32-interop.h"
 #include "lib/ui-settings.h"
 #include "lib/xaml-root.h"
 
@@ -242,6 +243,8 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
 
   V("displayAreaPrimary", bare_win_ui_display_area_primary)
   V("displayAreaGetFromWindowId", bare_win_ui_display_area_get_from_window_id)
+  V("win32InteropGetWindowFromWindowId", bare_win_ui_win32_interop_get_window_from_window_id)
+  V("win32InteropGetWindowIdFromWindow", bare_win_ui_win32_interop_get_window_id_from_window)
   V("displayAreaOuterBounds", bare_win_ui_display_area_outer_bounds)
   V("displayAreaWorkArea", bare_win_ui_display_area_work_area)
   V("displayAreaIsPrimary", bare_win_ui_display_area_is_primary)
