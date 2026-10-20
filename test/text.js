@@ -1,6 +1,5 @@
 const { test } = require('bare-tap')
-const { FontFamily, Run, SolidColorBrush, TextBlock } = require('..')
-const text = require('../lib/text')
+const { FontFamily, Run, SolidColorBrush, TextBlock, text } = require('..')
 
 test('sets the text of a text block', (t) => {
   const block = new TextBlock()

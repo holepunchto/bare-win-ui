@@ -23,7 +23,24 @@ import SolidColorBrush = require('./lib/solid-color-brush')
 import WebView2 = require('./lib/web-view2')
 import Window = require('./lib/window')
 import * as Win32Interop from './lib/win32-interop'
+import AppWindow = require('./lib/app-window')
+import Application = require('./lib/application')
+import * as Clipboard from './lib/clipboard'
+import CompositionTarget = require('./lib/composition-target')
+import ContentDialog = require('./lib/content-dialog')
+import ContentIslandEnvironment = require('./lib/content-island-environment')
+import CoreWebView2Settings = require('./lib/core-web-view2-settings')
+import DataPackage = require('./lib/data-package')
+import DataPackageView = require('./lib/data-package-view')
+import DisplayArea = require('./lib/display-area')
+import GeneralTransform = require('./lib/general-transform')
+import InputCursor = require('./lib/input-cursor')
+import InputSystemCursor = require('./lib/input-system-cursor')
+import IInspectable = require('./lib/object')
+import UISettings = require('./lib/ui-settings')
+import XamlRoot = require('./lib/xaml-root')
 import * as constants from './lib/constants'
+import * as text from './lib/text'
 import Compositor = require('./lib/compositor')
 import CompositionObject = require('./lib/composition-object')
 import Visual = require('./lib/visual')
@@ -77,7 +94,24 @@ export {
   WebView2,
   Window,
   Win32Interop,
+  AppWindow,
+  Application,
+  Clipboard,
+  CompositionTarget,
+  ContentDialog,
+  ContentIslandEnvironment,
+  CoreWebView2Settings,
+  DataPackage,
+  DataPackageView,
+  DisplayArea,
+  GeneralTransform,
+  InputCursor,
+  InputSystemCursor,
+  IInspectable,
+  UISettings,
+  XamlRoot,
   constants,
+  text,
   Compositor,
   CompositionObject,
   Visual,
