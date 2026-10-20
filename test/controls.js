@@ -1,15 +1,16 @@
 const { test } = require('bare-tap')
 const { afterAnimationFrame } = require('bare-animation-frame')
+const Pointer = require('bare-pointer')
 const {
   Canvas,
   Control,
+  FocusManager,
   PasswordBox,
   ProgressRing,
   SolidColorBrush,
   TextBox,
   ToggleSwitch
 } = require('..')
-const FocusManager = require('../lib/focus-manager')
 const { mount } = require('./helpers')
 
 test('sets the text of a text box', (t) => {
@@ -99,6 +100,32 @@ test('reports focus moving between text boxes', async (t) => {
   t.deepStrictEqual(events, ['gotFocus', 'lostFocus'])
 })
 
+test('focuses a text box with the pointer', async (t) => {
+  const canvas = new Canvas()
+  const box = new TextBox()
+
+  box.width = 200
+
+  Canvas.setLeft(box, 40)
+  Canvas.setTop(box, 30)
+
+  canvas.children.append(box)
+
+  await mount(t, canvas)
+
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  const events = []
+
+  box.on('gotFocus', () => events.push('gotFocus'))
+
+  await pointer.tap(box)
+
+  t.deepStrictEqual(events, ['gotFocus'])
+})
+
 test('sets the password of a password box', (t) => {
   const box = new PasswordBox()
 
@@ -129,6 +156,32 @@ test('emits when a toggle switch is toggled', async (t) => {
   t.equal(changes, 1, 'emitted for a change from code')
 })
 
+test('toggles a toggle switch with the pointer', async (t) => {
+  const canvas = new Canvas()
+  const toggle = new ToggleSwitch()
+
+  Canvas.setLeft(toggle, 40)
+  Canvas.setTop(toggle, 30)
+
+  canvas.children.append(toggle)
+
+  await mount(t, canvas)
+
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  let changes = 0
+
+  toggle.on('toggled', () => changes++)
+
+  // Only the switch at the left takes a tap, and the label beside it does not.
+  await pointer.tap(toggle, 20, toggle.actualHeight / 2)
+
+  t.equal(changes, 1, 'changed')
+  t.equal(toggle.isOn, true, 'on')
+})
+
 test('disables a control', (t) => {
   const toggle = new ToggleSwitch()
 
@@ -137,6 +190,34 @@ test('disables a control', (t) => {
   toggle.isEnabled = false
 
   t.equal(toggle.isEnabled, false, 'disabled')
+})
+
+test('does not toggle a disabled toggle switch with the pointer', async (t) => {
+  const canvas = new Canvas()
+  const toggle = new ToggleSwitch()
+
+  toggle.isEnabled = false
+
+  Canvas.setLeft(toggle, 40)
+  Canvas.setTop(toggle, 30)
+
+  canvas.children.append(toggle)
+
+  await mount(t, canvas)
+
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  let changes = 0
+
+  toggle.on('toggled', () => changes++)
+
+  // Only the switch at the left takes a tap, and the label beside it does not.
+  await pointer.tap(toggle, 20, toggle.actualHeight / 2)
+
+  t.equal(changes, 0, 'not changed')
+  t.equal(toggle.isOn, false, 'off')
 })
 
 test('finds a part of the control template once loaded', async (t) => {

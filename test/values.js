@@ -1,8 +1,5 @@
 const { test } = require('bare-tap')
-const { BitmapImage, Image } = require('..')
-const Clipboard = require('../lib/clipboard')
-const DataPackageView = require('../lib/data-package-view')
-const UISettings = require('../lib/ui-settings')
+const { BitmapImage, Clipboard, DataPackageView, Image, UISettings } = require('..')
 const { mount } = require('./helpers')
 
 const { TEXT } = DataPackageView.STANDARD_DATA_FORMATS

@@ -1,6 +1,7 @@
 const { test } = require('bare-tap')
 const { afterAnimationFrame } = require('bare-animation-frame')
-const { Canvas, FrameworkElement, TextBlock } = require('..')
+const Pointer = require('bare-pointer')
+const { Canvas, FrameworkElement, SolidColorBrush, TextBlock } = require('..')
 const { mount } = require('./helpers')
 
 const { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT, ELEMENT_THEME } = FrameworkElement
@@ -116,6 +117,51 @@ test('places children on a canvas', async (t) => {
     { x: 10, y: 20, width: 30, height: 40 },
     'bounds'
   )
+})
+
+test('reports the pointer over an element', async (t) => {
+  const canvas = new Canvas()
+  const box = new Canvas()
+
+  // A panel without a background is not hit tested.
+  box.background = new SolidColorBrush({ color: { a: 255, r: 200, g: 200, b: 200 } })
+  box.width = 200
+  box.height = 150
+
+  Canvas.setLeft(box, 40)
+  Canvas.setTop(box, 30)
+
+  canvas.children.append(box)
+
+  await mount(t, canvas)
+
+  const pointer = new Pointer()
+
+  t.teardown(() => pointer.destroy())
+
+  const events = []
+
+  // Input lands on whole physical pixels, which a DIP is not always a whole
+  // number of.
+  const point = ({ x, y }) => [Math.round(x), Math.round(y)]
+
+  box.on('pointerPressed', (event) => events.push(['pointerPressed', ...point(event)]))
+  box.on('pointerMoved', (event) => {
+    if (event.isInContact) events.push(['pointerMoved', ...point(event)])
+  })
+  box.on('pointerReleased', (event) => events.push(['pointerReleased', ...point(event)]))
+
+  await pointer.down(box, 10, 10)
+  await pointer.move(box, 50, 40)
+  await pointer.move(box, 90, 70)
+  await pointer.up()
+
+  t.deepStrictEqual(events, [
+    ['pointerPressed', 10, 10],
+    ['pointerMoved', 50, 40],
+    ['pointerMoved', 90, 70],
+    ['pointerReleased', 90, 70]
+  ])
 })
 
 test('is drawn into a XAML root once loaded', async (t) => {

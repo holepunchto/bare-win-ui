@@ -1,7 +1,5 @@
 const { test } = require('bare-tap')
-const { Canvas, Win32Interop, Window } = require('..')
-const Application = require('../lib/application')
-const DisplayArea = require('../lib/display-area')
+const { Application, Canvas, DisplayArea, Win32Interop, Window } = require('..')
 const { mount } = require('./helpers')
 
 test('sets the title', (t) => {
