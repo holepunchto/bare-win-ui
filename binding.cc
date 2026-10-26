@@ -105,6 +105,7 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("packageManagerAddPackage", bare_win_ui_package_manager_add_package)
 
   V("uiElementIsHitTestVisible", bare_win_ui_ui_element_is_hit_test_visible)
+  V("uiElementTransformMatrix", bare_win_ui_ui_element_transform_matrix)
   V("uiElementProtectedCursor", bare_win_ui_ui_element_protected_cursor)
   V("uiElementTransformToVisual", bare_win_ui_ui_element_transform_to_visual)
 
@@ -241,6 +242,9 @@ bare_win_ui_exports(js_env_t *env, js_value_t *exports) {
   V("appWindowId", bare_win_ui_app_window_id)
   V("appWindowSize", bare_win_ui_app_window_size)
   V("appWindowPosition", bare_win_ui_app_window_position)
+  V("appWindowIsVisible", bare_win_ui_app_window_is_visible)
+  V("appWindowShow", bare_win_ui_app_window_show)
+  V("appWindowHide", bare_win_ui_app_window_hide)
 
   V("displayAreaPrimary", bare_win_ui_display_area_primary)
   V("displayAreaGetFromWindowId", bare_win_ui_display_area_get_from_window_id)

@@ -14,6 +14,9 @@ interface WinUIUIElement<
   /** What the element is drawn into, or `null` before it is loaded. */
   readonly xamlRoot: WinUIXamlRoot | null
 
+  /** The transform, as sixteen numbers in the order CSS uses for `matrix3d()`. */
+  transformMatrix: number[]
+
   /** Whether the element can be the target of pointer events. */
   isHitTestVisible: boolean
 

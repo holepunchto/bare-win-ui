@@ -107,3 +107,96 @@ bare_win_ui_app_window_position(js_env_t *env, js_callback_info_t *info) {
 
   return result;
 }
+
+static js_value_t *
+bare_win_ui_app_window_is_visible(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  AppWindow window = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &window) < 0) return nullptr;
+
+  js_value_t *result;
+
+  try {
+    err = js_get_boolean(env, window.IsVisible(), &result);
+    assert(err == 0);
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+
+    return nullptr;
+  }
+
+  return result;
+}
+
+static js_value_t *
+bare_win_ui_app_window_show(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 2;
+  js_value_t *argv[2];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 2);
+
+  AppWindow window = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &window) < 0) return nullptr;
+
+  bool activate_window;
+  err = js_get_value_bool(env, argv[1], &activate_window);
+  assert(err == 0);
+
+  try {
+    window.Show(activate_window);
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+  }
+
+  return nullptr;
+}
+
+static js_value_t *
+bare_win_ui_app_window_hide(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  bare_win_ui_state_t *state;
+  err = js_get_callback_info(env, info, NULL, NULL, NULL, (void **) &state);
+  assert(err == 0);
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, nullptr, nullptr);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  AppWindow window = nullptr;
+  if (bare_winrt_read_type(env, state->registry, argv[0], "handle", &window) < 0) return nullptr;
+
+  try {
+    window.Hide();
+  } catch (hresult_error const &error) {
+    bare_win_ui__throw(env, error);
+  }
+
+  return nullptr;
+}

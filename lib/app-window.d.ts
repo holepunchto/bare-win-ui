@@ -8,6 +8,12 @@ interface WinUIAppWindow extends WinUIObject {
   readonly size: { width: number; height: number }
 
   readonly position: { x: number; y: number }
+
+  readonly isVisible: boolean
+
+  show(activateWindow?: boolean): this
+
+  hide(): this
 }
 
 declare class WinUIAppWindow {
