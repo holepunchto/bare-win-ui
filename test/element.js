@@ -119,6 +119,31 @@ test('places children on a canvas', async (t) => {
   )
 })
 
+test('transforms an element', async (t) => {
+  const canvas = new Canvas()
+  const child = new Canvas()
+
+  child.width = 30
+  child.height = 40
+
+  Canvas.setLeft(child, 10)
+
+  canvas.children.append(child)
+
+  await mount(t, canvas)
+
+  const matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 30, 0, 0, 1]
+
+  child.transformMatrix = matrix
+
+  t.deepStrictEqual(child.transformMatrix, matrix, 'the matrix')
+  t.deepStrictEqual(
+    child.transformToVisual(canvas).transformPoint(0, 0),
+    { x: 40, y: 0 },
+    'seen at once'
+  )
+})
+
 test('reports the pointer over an element', async (t) => {
   const canvas = new Canvas()
   const box = new Canvas()

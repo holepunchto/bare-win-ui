@@ -350,3 +350,11 @@ bare_win_ui__emit(js_env_t *env, js_ref_t *ctx, const char *name, size_t argc, j
   err = js_call_function(env, receiver, fn, argc, argv, nullptr);
   (void) err;
 }
+
+// A `float4x4` crosses as sixteen numbers, in the order CSS uses for
+// `matrix3d()`.
+#define BARE_WIN_UI_TRANSFORM(V) \
+  V(0, m11) V(1, m12) V(2, m13) V(3, m14) \
+  V(4, m21) V(5, m22) V(6, m23) V(7, m24) \
+  V(8, m31) V(9, m32) V(10, m33) V(11, m34) \
+  V(12, m41) V(13, m42) V(14, m43) V(15, m44)

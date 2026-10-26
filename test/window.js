@@ -106,6 +106,26 @@ test('belongs to an application', (t) => {
   t.equal(application.dispatcherShutdownMode, ON_LAST_WINDOW_CLOSE, 'shutdown mode')
 })
 
+test('hides and shows a second window', async (t) => {
+  await mount(t, new Canvas())
+
+  const window = new Window()
+
+  t.teardown(() => window.close())
+
+  window.activate()
+
+  t.ok(window.appWindow.isVisible, 'shown')
+
+  window.appWindow.hide()
+
+  t.notOk(window.appWindow.isVisible, 'hidden')
+
+  window.appWindow.show()
+
+  t.ok(window.appWindow.isVisible, 'shown again')
+})
+
 test('closes a second window', async (t) => {
   await mount(t, new Canvas())
 
