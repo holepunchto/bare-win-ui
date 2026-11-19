@@ -379,10 +379,8 @@ target_link_libraries(
     WindowsAppSDK_WinUI
 )
 
-# C++/WinRT needs C++17, but native addons are built as C++20 and share their
-# precompiled header with the targets that link them.
 target_compile_features(
   WindowsAppSDK
   INTERFACE
-    cxx_std_20
+    cxx_std_17
 )

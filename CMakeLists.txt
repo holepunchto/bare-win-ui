@@ -71,6 +71,18 @@ set_target_properties(
   OUTPUT_NAME bare
 )
 
+target_compile_features(
+  bare_runtime_executable
+  PRIVATE
+    cxx_std_20
+)
+
+target_compile_options(
+  bare_runtime_executable
+  PRIVATE
+    /GR-
+)
+
 target_precompile_headers(bare_runtime_executable REUSE_FROM ${bare_win_ui})
 
 add_dependencies(bare_runtime_executable WindowsAppSDK_Resources)
