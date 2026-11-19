@@ -2,20 +2,21 @@ cmake_minimum_required(VERSION 4.0)
 
 find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
 find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
+find_package(cmake-prelude REQUIRED PATHS node_modules/cmake-prelude)
 
 project(bare_win_ui C CXX)
 
-fetch_package("github:holepunchto/bare@1.35.1")
-fetch_package("github:holepunchto/libpath")
+fetch_package("github:holepunchto/bare@1.38.0")
+fetch_package("github:holepunchto/libpath#a68d099")
 
 include(cmake/windows-app-sdk.cmake)
 
-add_bare_module(bare_win_ui)
-
-target_sources(
-  ${bare_win_ui}
-  PRIVATE
+add_bare_module(
+  bare_win_ui
+  SOURCES
     binding.cc
+  LINK
+    WindowsAppSDK
 )
 
 target_include_directories(
@@ -36,51 +37,6 @@ target_precompile_headers(
     lib/windows-app-sdk.h
 )
 
-target_link_libraries(
-  ${bare_win_ui}
-  PUBLIC
-    WindowsAppSDK
-)
-
-add_executable(bare_runtime)
-
-target_sources(
-  bare_runtime
-  PRIVATE
-    lib/runtime.cc
-)
-
-target_precompile_headers(bare_runtime REUSE_FROM ${bare_win_ui})
-
-set_target_properties(
-  bare_runtime
-  PROPERTIES
-  CXX_STANDARD 20
-  OUTPUT_NAME bare
-  ENABLE_EXPORTS ON
-  WINDOWS_EXPORT_ALL_SYMBOLS ON
-)
-
-target_link_libraries(
-  bare_runtime
-  PUBLIC
-    $<LINK_LIBRARY:WHOLE_ARCHIVE,bare_static>
-  PRIVATE
-    rlimit_static
-    path_static
-  PRIVATE
-    WindowsAppSDK
-)
-
-add_dependencies(bare_runtime WindowsAppSDK_Resources)
-
-target_link_options(
-  bare_runtime
-  PRIVATE
-    /subsystem:windows
-    /entry:mainCRTStartup
-)
-
 file(READ "package.json" pkg)
 
 string(JSON version GET "${pkg}" version)
@@ -91,15 +47,40 @@ string(CONFIGURE "${manifest}" manifest)
 
 file(GENERATE OUTPUT "runtime.manifest" CONTENT "${manifest}" NEWLINE_STYLE WIN32)
 
-target_sources(
-  bare_runtime
-  PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}/runtime.manifest"
-)
-
 bare_target(target)
 
-install(TARGETS bare_runtime RUNTIME DESTINATION ${target})
+add_executable_target(
+  bare_runtime
+  SOURCES
+    lib/runtime.cc
+    "${CMAKE_CURRENT_BINARY_DIR}/runtime.manifest"
+  LINK
+    $<LINK_LIBRARY:WHOLE_ARCHIVE,bare::static>
+    bare::exports
+    rlimit::static
+    path::static
+    WindowsAppSDK
+  DESTINATION ${target}
+  OUTPUT_DIRECTORY bin
+  EXPORT OFF
+)
+
+set_target_properties(
+  bare_runtime_executable
+  PROPERTIES
+  OUTPUT_NAME bare
+)
+
+target_precompile_headers(bare_runtime_executable REUSE_FROM ${bare_win_ui})
+
+add_dependencies(bare_runtime_executable WindowsAppSDK_Resources)
+
+target_link_options(
+  bare_runtime_executable
+  PRIVATE
+    /subsystem:windows
+    /entry:mainCRTStartup
+)
 
 install(
   FILES
